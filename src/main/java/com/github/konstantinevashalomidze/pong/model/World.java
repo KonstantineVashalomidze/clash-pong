@@ -12,11 +12,30 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
     }
 
     public World step(double dt) {
-        Ball advancedAndBounced = ball.advance(dt).bounceOffWalls(playfield);
+        Ball ball = this.ball.advance(dt).bounceOffWalls(playfield);
+        int rightScore = this.rightScore;
+        if (ball.isOutLeft(playfield)) {
+            rightScore += 1;
+            ball = new Ball(
+                    new Vec2(playfield.width() / 2, playfield.height() / 2),
+                    new Vec2(200, 120),
+                    ball().radius()
+            );
+        }
+
+        int leftScore = this.leftScore;
+        if (ball.isOutRight(playfield)) {
+            leftScore += 1;
+            ball = new Ball(
+                    new Vec2(playfield.width() / 2, playfield.height() / 2),
+                    new Vec2(-200, 120),
+                    ball().radius()
+            );
+        }
 
         return new World(
             playfield,
-            advancedAndBounced,
+            ball,
             left,
             right,
             leftScore,
