@@ -5,10 +5,11 @@ import com.github.konstantinevashalomidze.pong.model.Paddle;
 import com.github.konstantinevashalomidze.pong.model.World;
 
 import javax.swing.*;
+import javax.tools.Tool;
 import java.awt.*;
 
 public class GamePanel extends JPanel {
-    private final World world;
+    private World world;
 
     public GamePanel(World world) {
         this.world = world;
@@ -19,6 +20,10 @@ public class GamePanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+
+        if (world == null) {
+            return;
+        }
 
         // Ball
         Ball ball = world.ball();
@@ -71,6 +76,18 @@ public class GamePanel extends JPanel {
                 rightPaddleHeight
         );
 
+        // For linux
+        Toolkit.getDefaultToolkit().sync();
+
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
+        repaint();
+    }
+
+    public World getWorld() {
+        return world;
     }
 
 }
