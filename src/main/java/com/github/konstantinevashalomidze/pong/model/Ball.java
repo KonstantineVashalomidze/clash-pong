@@ -39,4 +39,12 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
         return this;
     }
 
+    public boolean isOutRight(Playfield playfield) {
+        return position.x() - radius > playfield.width();
+    }
+
+    public boolean isOutLeft(Playfield playfield) {
+        return position.x() + radius < 0;
+    }
+
 }

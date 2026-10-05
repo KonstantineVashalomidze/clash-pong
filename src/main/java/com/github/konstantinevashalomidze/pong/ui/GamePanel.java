@@ -5,7 +5,6 @@ import com.github.konstantinevashalomidze.pong.model.Paddle;
 import com.github.konstantinevashalomidze.pong.model.World;
 
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
 
 public class GamePanel extends JPanel {

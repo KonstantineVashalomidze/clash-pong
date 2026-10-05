@@ -13,6 +13,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
     public World step(double dt) {
         Ball advancedAndBounced = ball.advance(dt).bounceOffWalls(playfield);
+
         return new World(
             playfield,
             advancedAndBounced,
