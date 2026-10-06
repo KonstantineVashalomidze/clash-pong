@@ -1,6 +1,7 @@
 package com.github.konstantinevashalomidze.pong.ui;
 
 import com.github.konstantinevashalomidze.pong.model.Ball;
+import com.github.konstantinevashalomidze.pong.model.GameMode;
 import com.github.konstantinevashalomidze.pong.model.Paddle;
 import com.github.konstantinevashalomidze.pong.model.World;
 
@@ -11,11 +12,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
+import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_COMPUTER;
+import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
 
 public class GamePanel extends JPanel {
-    private World world;
     private final Set<String> actionKeys = new HashSet<>();
-
+    private World world;
+    private GameMode gameMode;
     public GamePanel(World world) {
         this.world = world;
 
@@ -108,11 +111,42 @@ public class GamePanel extends JPanel {
         getInputMap(WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke("released DOWN"), DOWN_ARROW_UP);
         getActionMap().put(DOWN_ARROW_UP, downArrowUp);
+
+        Action oneDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameMode = HUMAN_VS_HUMAN;
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed 1"), ONE_DOWN);
+        getActionMap().put(ONE_DOWN, oneDown);
+
+        Action twoDown =  new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameMode = HUMAN_VS_COMPUTER;
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed 2"), TWO_DOWN);
+        getActionMap().put(TWO_DOWN, twoDown);
+
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        // Draw menu
+        if (gameMode == null) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+            g.drawString("Press 1: Two players", 150, 280);
+            g.drawString("Press 2: Vs computer", 150, 330);
+            return;
+        }
 
         if (world == null) {
             throw new IllegalStateException("World is null");
@@ -194,5 +228,12 @@ public class GamePanel extends JPanel {
         return actionKeys;
     }
 
+    public GameMode getGameMode() {
+        return gameMode;
+    }
 
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+        repaint();
+    }
 }

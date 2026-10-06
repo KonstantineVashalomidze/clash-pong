@@ -9,4 +9,6 @@ public class ActionEvents {
     public static final String UP_ARROW_DOWN = "upArrowDown";
     public static final String DOWN_ARROW_UP = "downArrowUp";
     public static final String DOWN_ARROW_DOWN = "downArrowDown";
+    public static final String ONE_DOWN = "oneDown";
+    public static final String TWO_DOWN = "twoDown";
 }
