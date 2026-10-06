@@ -7,16 +7,13 @@ import com.github.konstantinevashalomidze.pong.model.World;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.github.konstantinevashalomidze.pong.model.ActionEvents.W_DOWN;
+import static com.github.konstantinevashalomidze.pong.model.ActionEvents.W_UP;
+
 public class GamePanel extends JPanel {
-    private final String W_DOWN = "wDown";
-    private final String W_UP = "wUp";
-
-
     private World world;
     private final Set<String> actionKeys = new HashSet<>();
 
@@ -29,7 +26,6 @@ public class GamePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 actionKeys.add(W_DOWN);
-                System.out.println(actionKeys);
             }
         };
 
@@ -40,16 +36,13 @@ public class GamePanel extends JPanel {
         Action wUp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.add(W_UP);
-                System.out.println(actionKeys);
+                actionKeys.remove(W_DOWN);
             }
         };
 
         getInputMap(WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke("released W"), W_UP);
         getActionMap().put(W_UP, wUp);
-
-
     }
 
     @Override
@@ -57,7 +50,7 @@ public class GamePanel extends JPanel {
         super.paintComponent(g);
 
         if (world == null) {
-            return;
+            throw new IllegalStateException("World is null");
         }
 
         // Ball
@@ -124,5 +117,10 @@ public class GamePanel extends JPanel {
     public World getWorld() {
         return world;
     }
+
+    public Set<String> getActionKeys() {
+        return actionKeys;
+    }
+
 
 }

@@ -1,5 +1,10 @@
 package com.github.konstantinevashalomidze.pong.model;
 
+import java.util.Set;
+
+import static com.github.konstantinevashalomidze.pong.model.ActionEvents.W_DOWN;
+import static com.github.konstantinevashalomidze.pong.model.ActionEvents.W_UP;
+
 public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, int leftScore, int rightScore) {
     public World {
         if (leftScore < 0) {
@@ -11,7 +16,15 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         }
     }
 
-    public World step(double dt) {
+    public World step(double dt, Set<String> actionKeys) {
+
+        Paddle left = null;
+        // Paddle movement
+        if (actionKeys.contains(W_DOWN)) {
+            left = this.left.moveBy(-300 * dt);
+        }
+
+        // Ball movement
         Ball ball = this.ball.advance(dt).bounceOffWalls(playfield);
         int rightScore = this.rightScore;
         if (ball.isOutLeft(playfield)) {
@@ -36,7 +49,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         return new World(
             playfield,
             ball,
-            left,
+            left != null ? left : this.left,
             right,
             leftScore,
             rightScore

@@ -25,7 +25,7 @@ public class Main {
             gamePanel.setPreferredSize(new Dimension(width, height));
 
             Timer loop = new Timer(16, (e) -> {
-                gamePanel.setWorld(gamePanel.getWorld().step(0.016));
+                gamePanel.setWorld(gamePanel.getWorld().step(0.016, gamePanel.getActionKeys()));
             });
 
             frame.getContentPane().add(gamePanel);
