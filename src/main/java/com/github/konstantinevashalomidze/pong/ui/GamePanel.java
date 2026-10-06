@@ -6,14 +6,50 @@ import com.github.konstantinevashalomidze.pong.model.World;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GamePanel extends JPanel {
+    private final String W_DOWN = "wDown";
+    private final String W_UP = "wUp";
+
+
     private World world;
+    private final Set<String> actionKeys = new HashSet<>();
 
     public GamePanel(World world) {
         this.world = world;
 
         setBackground(Color.BLACK);
+
+        Action wDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.add(W_DOWN);
+                System.out.println(actionKeys);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed W"), W_DOWN);
+        getActionMap().put(W_DOWN, wDown);
+
+        Action wUp = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.add(W_UP);
+                System.out.println(actionKeys);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("released W"), W_UP);
+        getActionMap().put(W_UP, wUp);
+
+
     }
 
     @Override

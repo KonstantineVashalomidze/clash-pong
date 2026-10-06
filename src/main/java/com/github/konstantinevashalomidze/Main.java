@@ -14,7 +14,7 @@ public class Main {
 
             World world = new World(
                     new Playfield(800, 600),
-                    new Ball(new Vec2(400, 300), new Vec2(20, 30), 8),
+                    new Ball(new Vec2(400, 300), new Vec2(200, 120), 8),
                     new Paddle(new Vec2(30, 300), 10, 80),
                     new Paddle(new Vec2(770, 300), 10, 80),
                     0,
