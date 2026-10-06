@@ -5,6 +5,11 @@ import com.github.konstantinevashalomidze.pong.ui.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_COMPUTER;
+import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
 
 public class Main {
     static void main() {
@@ -25,8 +30,15 @@ public class Main {
             gamePanel.setPreferredSize(new Dimension(width, height));
 
             Timer loop = new Timer(16, (e) -> {
-                if (gamePanel.getGameMode() != null) {
+                if (gamePanel.getGameMode() == HUMAN_VS_HUMAN) {
                     gamePanel.setWorld(gamePanel.getWorld().step(0.016, gamePanel.getActionKeys()));
+                } else if (gamePanel.getGameMode() == HUMAN_VS_COMPUTER) {
+                    Set<String> copiedActionKeys = new HashSet<>(gamePanel.getActionKeys());
+                    String computerAction = ComputerPlayer.makeAction(gamePanel.getWorld());
+                    if (computerAction != null) {
+                        copiedActionKeys.add(computerAction);
+                    }
+                    gamePanel.setWorld(gamePanel.getWorld().step(0.016, copiedActionKeys));
                 }
             });
 
