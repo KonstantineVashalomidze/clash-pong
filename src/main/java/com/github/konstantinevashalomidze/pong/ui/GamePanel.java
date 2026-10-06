@@ -10,8 +10,7 @@ import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.github.konstantinevashalomidze.pong.model.ActionEvents.W_DOWN;
-import static com.github.konstantinevashalomidze.pong.model.ActionEvents.W_UP;
+import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 
 public class GamePanel extends JPanel {
     private World world;
@@ -43,6 +42,29 @@ public class GamePanel extends JPanel {
         getInputMap(WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke("released W"), W_UP);
         getActionMap().put(W_UP, wUp);
+
+        Action sDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.add(S_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed S"), S_DOWN);
+        getActionMap().put(S_DOWN, sDown);
+
+        Action sUp = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.remove(S_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("released S"), S_UP);
+        getActionMap().put(S_UP, sUp);
+
     }
 
     @Override
