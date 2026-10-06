@@ -27,7 +27,9 @@ public class GamePanel extends JPanel {
         Action wDown = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.add(W_DOWN);
+                if (gameMode != null) {
+                    actionKeys.add(W_DOWN);
+                }
             }
         };
 
@@ -38,7 +40,9 @@ public class GamePanel extends JPanel {
         Action wUp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.remove(W_DOWN);
+                if (gameMode != null) {
+                    actionKeys.remove(W_DOWN);
+                }
             }
         };
 
@@ -49,7 +53,9 @@ public class GamePanel extends JPanel {
         Action sDown = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.add(S_DOWN);
+                if (gameMode != null) {
+                    actionKeys.add(S_DOWN);
+                }
             }
         };
 
@@ -60,7 +66,9 @@ public class GamePanel extends JPanel {
         Action sUp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.remove(S_DOWN);
+                if (gameMode != null) {
+                    actionKeys.remove(S_DOWN);
+                }
             }
         };
 
@@ -71,7 +79,9 @@ public class GamePanel extends JPanel {
         Action upArrowDown = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.add(UP_ARROW_DOWN);
+                if (gameMode == HUMAN_VS_HUMAN) {
+                    actionKeys.add(UP_ARROW_DOWN);
+                }
             }
         };
 
@@ -82,7 +92,9 @@ public class GamePanel extends JPanel {
         Action upArrowUp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.remove(UP_ARROW_DOWN);
+                if (gameMode == HUMAN_VS_HUMAN) {
+                    actionKeys.remove(UP_ARROW_DOWN);
+                }
             }
         };
 
@@ -93,7 +105,9 @@ public class GamePanel extends JPanel {
         Action downArrowDown = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.add(DOWN_ARROW_DOWN);
+                if (gameMode == HUMAN_VS_HUMAN) {
+                    actionKeys.add(DOWN_ARROW_DOWN);
+                }
             }
         };
 
@@ -104,7 +118,9 @@ public class GamePanel extends JPanel {
         Action downArrowUp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                actionKeys.remove(DOWN_ARROW_DOWN);
+                if (gameMode == HUMAN_VS_HUMAN) {
+                    actionKeys.remove(DOWN_ARROW_DOWN);
+                }
             }
         };
 
