@@ -65,6 +65,49 @@ public class GamePanel extends JPanel {
                 .put(KeyStroke.getKeyStroke("released S"), S_UP);
         getActionMap().put(S_UP, sUp);
 
+        Action upArrowDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.add(UP_ARROW_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed UP"), UP_ARROW_DOWN);
+        getActionMap().put(UP_ARROW_DOWN, upArrowDown);
+
+        Action upArrowUp = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.remove(UP_ARROW_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("released UP"),  UP_ARROW_UP);
+        getActionMap().put(UP_ARROW_UP, upArrowUp);
+
+        Action downArrowDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.add(DOWN_ARROW_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed DOWN"), DOWN_ARROW_DOWN);
+        getActionMap().put(DOWN_ARROW_DOWN, downArrowDown);
+
+        Action downArrowUp = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionKeys.remove(DOWN_ARROW_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("released DOWN"), DOWN_ARROW_UP);
+        getActionMap().put(DOWN_ARROW_UP, downArrowUp);
     }
 
     @Override
