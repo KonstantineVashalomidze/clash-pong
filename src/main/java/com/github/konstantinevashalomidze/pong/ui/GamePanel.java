@@ -169,6 +169,13 @@ public class GamePanel extends JPanel {
                 rightPaddleHeight
         );
 
+        // Draw scores
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
+
+        g.drawString(Integer.toString(world.leftScore()), 350, 50);
+        g.drawString(Integer.toString(world.rightScore()), 430, 50);
+
         // For linux
         Toolkit.getDefaultToolkit().sync();
 
