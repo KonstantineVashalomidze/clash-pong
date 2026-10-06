@@ -31,4 +31,25 @@ public record Paddle(Vec2 center, double width, double height) {
     public Paddle moveBy(double dy) {
         return new Paddle(center.plus(new Vec2(0, dy)), width, height);
     }
+
+    public Paddle clampTo(Playfield playfield) {
+        if (center.y() < height / 2) {
+            return new Paddle(
+                    new Vec2(center.x(), height / 2),
+                    width,
+                    height
+                    );
+        }
+
+        if (center.y() > playfield.height() - height / 2) {
+            return new Paddle(
+                    new Vec2(center.x(), playfield.height() - height / 2),
+                    width,
+                    height
+            );
+        }
+
+        return this;
+    }
+
 }

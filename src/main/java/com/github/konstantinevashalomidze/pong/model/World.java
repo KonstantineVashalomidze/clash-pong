@@ -27,6 +27,10 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             left = this.left.moveBy(300 * dt);
         }
 
+        if (left != null) {
+            left = left.clampTo(playfield);
+        }
+
         Paddle right = null;
         if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN)) {
             right = this.right.moveBy(-300 * dt);
@@ -36,6 +40,9 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             right = this.right.moveBy(300 * dt);
         }
 
+        if (right != null) {
+            right = right.clampTo(playfield);
+        }
 
         // Ball movement
         Ball ball = this.ball.advance(dt).bounceOffWalls(playfield);
