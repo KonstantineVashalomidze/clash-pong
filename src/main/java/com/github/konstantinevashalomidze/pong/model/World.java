@@ -27,9 +27,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             left = this.left.moveBy(300 * dt);
         }
 
-        if (left != null) {
-            left = left.clampTo(playfield);
+        if (left == null) {
+            left = this.left;
         }
+
+        left = left.clampTo(playfield);
 
         Paddle right = null;
         if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN)) {
@@ -40,9 +42,12 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             right = this.right.moveBy(300 * dt);
         }
 
-        if (right != null) {
-            right = right.clampTo(playfield);
+        if (right == null) {
+            right = this.right;
         }
+
+        right = right.clampTo(playfield);
+
 
         // Ball movement
         Ball ball = this.ball.advance(dt).bounceOffWalls(playfield);
@@ -66,11 +71,21 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             );
         }
 
+        // Bounce ball off the paddles
+        if (ball.overlaps(left) && ball.velocity().x() < 0
+                || ball.overlaps(right) && ball.velocity().x() > 0) {
+            ball = new Ball(
+                ball.position(),
+                new Vec2((-1) * ball.velocity().x(), ball.velocity().y()),
+                ball.radius()
+            );
+        }
+
         return new World(
             playfield,
             ball,
-            left != null ? left : this.left,
-            right != null ? right : this.right,
+            left,
+            right,
             leftScore,
             rightScore
         );
