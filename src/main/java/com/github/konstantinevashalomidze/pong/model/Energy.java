@@ -25,4 +25,11 @@ public record Energy(double amount) {
         return amount >= cost;
     }
 
+    public Energy spend(double cost) {
+        if (!canAfford(cost)) {
+            throw new EnergyArgumentException("Need energy of %.1f, have %.1f".formatted(cost, amount));
+        }
+        return new Energy(amount - cost);
+    }
+
 }
