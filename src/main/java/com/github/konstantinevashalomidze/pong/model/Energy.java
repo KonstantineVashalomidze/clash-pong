@@ -17,8 +17,9 @@ public record Energy(double amount) {
         }
     }
 
-
-
+    public Energy refill(double dt) {
+        return new Energy(Double.min(10, amount + dt / 1.5));
+    }
 
 
 
