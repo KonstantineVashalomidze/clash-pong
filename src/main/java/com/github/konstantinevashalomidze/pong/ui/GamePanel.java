@@ -1,9 +1,6 @@
 package com.github.konstantinevashalomidze.pong.ui;
 
-import com.github.konstantinevashalomidze.pong.model.Ball;
-import com.github.konstantinevashalomidze.pong.model.GameMode;
-import com.github.konstantinevashalomidze.pong.model.Paddle;
-import com.github.konstantinevashalomidze.pong.model.World;
+import com.github.konstantinevashalomidze.pong.model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -225,6 +222,34 @@ public class GamePanel extends JPanel {
 
         g.drawString(Integer.toString(world.leftScore()), 350, 50);
         g.drawString(Integer.toString(world.rightScore()), 430, 50);
+
+        // Draw energy bars
+        // Outline
+        g.setColor(Color.WHITE);
+        g.drawRect(20, 570, 200, 20);
+
+        g.setColor(Color.WHITE);
+        g.drawRect(580, 570, 200, 20);
+
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
+
+        Energy leftEnergy = world.leftEnergy();
+        g.fillRect(20, 570, (int) (leftEnergy.amount() / 10 * 200), 20);
+        g.drawString(String.format("%.1f", leftEnergy.amount()), 240, 570 + 20);
+        g.setColor(Color.BLACK);
+        for (int i = 1; i <= 9; i++) {
+            g.drawLine(20 + i * 20, 570, 20 + i * 20, 570 + 20);
+        }
+
+        g.setColor(Color.WHITE);
+        FontMetrics fm = g.getFontMetrics();
+        Energy rightEnergy = world.rightEnergy();
+        g.fillRect(580, 570, (int) (rightEnergy.amount() / 10 * 200), 20);
+        g.drawString(String.format("%.1f", leftEnergy.amount()), 540, 570 + 20);
+        g.setColor(Color.BLACK);
+        for (int i = 1; i <= 9; i++) {
+            g.drawLine(580 + i * 20, 570, 580 + i * 20, 570 + 20);
+        }
 
         // For linux
         Toolkit.getDefaultToolkit().sync();
