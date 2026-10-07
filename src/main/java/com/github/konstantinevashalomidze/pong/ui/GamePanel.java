@@ -225,14 +225,15 @@ public class GamePanel extends JPanel {
 
         // Draw energy bars
         // Outline
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.drawRect(20, 570, 200, 20);
 
-        g.setColor(Color.WHITE);
+        g.setColor(Color.BLACK);
         g.drawRect(580, 570, 200, 20);
 
         g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
 
+        g.setColor(Color.WHITE);
         Energy leftEnergy = world.leftEnergy();
         g.fillRect(20, 570, (int) (leftEnergy.amount() / 10 * 200), 20);
         g.drawString(String.format("%.1f", leftEnergy.amount()), 240, 570 + 20);
@@ -242,7 +243,6 @@ public class GamePanel extends JPanel {
         }
 
         g.setColor(Color.WHITE);
-        FontMetrics fm = g.getFontMetrics();
         Energy rightEnergy = world.rightEnergy();
         g.fillRect(580, 570, (int) (rightEnergy.amount() / 10 * 200), 20);
         g.drawString(String.format("%.1f", leftEnergy.amount()), 540, 570 + 20);
