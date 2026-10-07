@@ -23,7 +23,9 @@ public class Main {
                     new Paddle(new Vec2(30, 300), 10, 80),
                     new Paddle(new Vec2(770, 300), 10, 80),
                     0,
-                    0
+                    0,
+                    new Energy(5),
+                    new Energy(5)
             );
 
             GamePanel gamePanel = new GamePanel(world);
