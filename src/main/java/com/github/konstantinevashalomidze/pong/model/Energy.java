@@ -21,6 +21,8 @@ public record Energy(double amount) {
         return new Energy(Double.min(10, amount + dt / 1.5));
     }
 
-
+    public boolean canAfford(double cost) {
+        return amount >= cost;
+    }
 
 }
