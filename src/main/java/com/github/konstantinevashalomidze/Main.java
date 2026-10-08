@@ -6,8 +6,10 @@ import com.github.konstantinevashalomidze.pong.ui.GamePanel;
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import static com.github.konstantinevashalomidze.pong.model.Card.*;
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_COMPUTER;
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
 
@@ -25,7 +27,11 @@ public class Main {
                     0,
                     0,
                     new Energy(5),
-                    new Energy(5)
+                    new Energy(5),
+                    new Hand(List.of(BARRICADE, BIG_PADDLE, SHRINK, FREEZE),
+                            List.of(SMASH, SLOW_FIELD, STRAFE, GOAL_SHIELD)),
+                    new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
+                            List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE))
             );
 
             GamePanel gamePanel = new GamePanel(world);

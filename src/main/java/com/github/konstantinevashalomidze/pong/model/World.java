@@ -4,7 +4,7 @@ import java.util.Set;
 
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 
-public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, int leftScore, int rightScore, Energy leftEnergy, Energy rightEnergy) {
+public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, int leftScore, int rightScore, Energy leftEnergy, Energy rightEnergy, Hand leftHand, Hand rightHand) {
     public World {
         if (leftScore < 0) {
             throw new WorldArgumentException("Left score cannot be negative");
