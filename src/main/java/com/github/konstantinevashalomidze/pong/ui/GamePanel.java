@@ -236,18 +236,17 @@ public class GamePanel extends JPanel {
         g.setColor(Color.WHITE);
         Energy leftEnergy = world.leftEnergy();
         g.fillRect(20, 570, (int) (leftEnergy.amount() / 10 * 200), 20);
-        g.drawString(String.format("%.1f", leftEnergy.amount()), 240, 570 + 20);
-        g.setColor(Color.BLACK);
+        g.drawString(String.valueOf((int) Math.floor(leftEnergy.amount())), 230, 570 + 20);
         for (int i = 1; i <= 9; i++) {
+            g.setColor(Color.BLACK);
             g.drawLine(20 + i * 20, 570, 20 + i * 20, 570 + 20);
         }
 
         g.setColor(Color.WHITE);
         Energy rightEnergy = world.rightEnergy();
         g.fillRect(580, 570, (int) (rightEnergy.amount() / 10 * 200), 20);
-        g.drawString(String.format("%.1f", leftEnergy.amount()), 540, 570 + 20);
-        g.setColor(Color.BLACK);
         for (int i = 1; i <= 9; i++) {
+            g.setColor(Color.BLACK);
             g.drawLine(580 + i * 20, 570, 580 + i * 20, 570 + 20);
         }
 
