@@ -39,15 +39,16 @@ public class Main {
 
             Timer loop = new Timer(16, (e) -> {
                 if (gamePanel.getGameMode() == HUMAN_VS_HUMAN) {
-                    gamePanel.setWorld(gamePanel.getWorld().step(0.016, gamePanel.getActionKeys()));
+                    gamePanel.setWorld(gamePanel.getWorld().step(0.016, gamePanel.getActionKeys(), gamePanel.getActionPressedKeys()));
                 } else if (gamePanel.getGameMode() == HUMAN_VS_COMPUTER) {
                     Set<String> copiedActionKeys = new HashSet<>(gamePanel.getActionKeys());
                     String computerAction = ComputerPlayer.makeAction(gamePanel.getWorld());
                     if (computerAction != null) {
                         copiedActionKeys.add(computerAction);
                     }
-                    gamePanel.setWorld(gamePanel.getWorld().step(0.016, copiedActionKeys));
+                    gamePanel.setWorld(gamePanel.getWorld().step(0.016, copiedActionKeys, gamePanel.getActionPressedKeys()));
                 }
+                gamePanel.getActionPressedKeys().clear();
             });
 
             frame.getContentPane().add(gamePanel);

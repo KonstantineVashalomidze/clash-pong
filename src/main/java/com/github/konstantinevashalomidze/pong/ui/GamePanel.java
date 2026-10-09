@@ -14,6 +14,7 @@ import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HU
 
 public class GamePanel extends JPanel {
     private final Set<String> actionKeys = new HashSet<>();
+    private final Set<String> actionPressedKeys = new HashSet<>();
     private World world;
     private GameMode gameMode;
     public GamePanel(World world) {
@@ -147,6 +148,51 @@ public class GamePanel extends JPanel {
                 .put(KeyStroke.getKeyStroke("pressed 2"), TWO_DOWN);
         getActionMap().put(TWO_DOWN, twoDown);
 
+        Action fDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionPressedKeys.add(F_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed F"), F_DOWN);
+        getActionMap().put(F_DOWN, fDown);
+
+        Action gDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionPressedKeys.add(G_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed G"), G_DOWN);
+        getActionMap().put(G_DOWN, gDown);
+
+
+        Action hDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionPressedKeys.add(H_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed H"), H_DOWN);
+        getActionMap().put(H_DOWN, hDown);
+
+        Action jDown = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionPressedKeys.add(J_DOWN);
+            }
+        };
+
+        getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                .put(KeyStroke.getKeyStroke("pressed J"), J_DOWN);
+        getActionMap().put(J_DOWN, jDown);
+
     }
 
     @Override
@@ -270,6 +316,10 @@ public class GamePanel extends JPanel {
 
     public GameMode getGameMode() {
         return gameMode;
+    }
+
+    public Set<String> getActionPressedKeys() {
+        return actionPressedKeys;
     }
 
     public void setGameMode(GameMode gameMode) {

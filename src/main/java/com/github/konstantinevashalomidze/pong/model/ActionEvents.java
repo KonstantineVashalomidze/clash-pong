@@ -11,4 +11,8 @@ public class ActionEvents {
     public static final String DOWN_ARROW_DOWN = "downArrowDown";
     public static final String ONE_DOWN = "oneDown";
     public static final String TWO_DOWN = "twoDown";
+    public static final String F_DOWN = "fDown";
+    public static final String G_DOWN = "gDown";
+    public static final String H_DOWN = "hDown";
+    public static final String J_DOWN = "jDown";
 }

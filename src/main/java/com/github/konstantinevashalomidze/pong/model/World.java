@@ -15,7 +15,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         }
     }
 
-    public World step(double dt, Set<String> actionKeys) {
+    public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
         Paddle left = null;
         // Paddle movement
@@ -85,6 +85,38 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         Energy leftEnergy = this.leftEnergy.refill(dt);
         Energy rightEnergy = this.rightEnergy.refill(dt);
 
+        // Card usages
+        Hand leftHand = null;
+        if (actionPressedKeys.contains(F_DOWN)) {
+            if (leftEnergy.canAfford(this.leftHand.hand().get(0).cost())) {
+                leftHand = this.leftHand.play(0);
+                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(0).cost());
+            }
+        }
+
+        if (actionPressedKeys.contains(G_DOWN)) {
+            if (leftEnergy.canAfford(this.leftHand.hand().get(1).cost())) {
+                leftHand = this.leftHand.play(1);
+                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(1).cost());
+            }
+        }
+
+        if (actionPressedKeys.contains(H_DOWN)) {
+            if (leftEnergy.canAfford(this.leftHand.hand().get(2).cost())) {
+                leftHand = this.leftHand.play(2);
+                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(2).cost());
+            }
+        }
+
+        if (actionPressedKeys.contains(J_DOWN)) {
+            if (leftEnergy.canAfford(this.leftHand.hand().get(3).cost())) {
+                leftHand = this.leftHand.play(3);
+                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(3).cost());
+            }
+        }
+
+        leftHand = leftHand == null ? this.leftHand : leftHand;
+
         return new World(
             playfield,
             ball,
@@ -93,7 +125,9 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             leftScore,
             rightScore,
             leftEnergy,
-            rightEnergy
+            rightEnergy,
+            leftHand,
+            rightHand
         );
     }
 }
