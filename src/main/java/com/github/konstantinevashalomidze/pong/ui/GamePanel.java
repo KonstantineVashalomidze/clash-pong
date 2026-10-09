@@ -272,34 +272,52 @@ public class GamePanel extends JPanel {
         // Draw energy bars
         // Outline
         g.setColor(Color.BLACK);
-        g.drawRect(20, 570, 200, 20);
+        g.drawRect(20, 660, 200, 20);
 
         g.setColor(Color.BLACK);
-        g.drawRect(580, 570, 200, 20);
+        g.drawRect(580, 660, 200, 20);
 
         g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
 
         g.setColor(Color.WHITE);
         Energy leftEnergy = world.leftEnergy();
-        g.fillRect(20, 570, (int) (leftEnergy.amount() / 10 * 200), 20);
-        g.drawString(String.valueOf((int) Math.floor(leftEnergy.amount())), 230, 570 + 20);
+        g.fillRect(20, 660, (int) (leftEnergy.amount() / 10 * 200), 20);
+        g.drawString(String.valueOf((int) Math.floor(leftEnergy.amount())), 230, 660 + 20);
         for (int i = 1; i <= 9; i++) {
             g.setColor(Color.BLACK);
-            g.drawLine(20 + i * 20, 570, 20 + i * 20, 570 + 20);
+            g.drawLine(20 + i * 20, 660, 20 + i * 20, 660 + 20);
         }
 
         g.setColor(Color.WHITE);
         Energy rightEnergy = world.rightEnergy();
-        g.fillRect(580, 570, (int) (rightEnergy.amount() / 10 * 200), 20);
+        g.fillRect(580, 660, (int) (rightEnergy.amount() / 10 * 200), 20);
         for (int i = 1; i <= 9; i++) {
             g.setColor(Color.BLACK);
-            g.drawLine(580 + i * 20, 570, 580 + i * 20, 570 + 20);
+            g.drawLine(580 + i * 20, 660, 580 + i * 20, 660 + 20);
         }
+
+        g.setColor(Color.WHITE);
+        g.drawLine(0, 600, getWidth(), 600);
+
+
+        // Hand
+        drawHand(g, world.leftHand(), 20);
 
         // For linux
         Toolkit.getDefaultToolkit().sync();
 
     }
+
+    private void drawHand(Graphics g, Hand hand, int startX) {
+        g.setColor(Color.WHITE);
+        for (int i = 0; i < hand.hand().size(); i++) {
+            int cardX = startX + i * 75;
+            g.drawRect(startX + i * 75, 610, 70, 44);
+            g.drawString(hand.hand().get(i).name().substring(0, 3), cardX + 4, 627);
+            g.drawString(Integer.toString(hand.hand().get(i).cost()), cardX + 4, 645);
+        }
+    }
+
 
     public void setWorld(World world) {
         this.world = world;

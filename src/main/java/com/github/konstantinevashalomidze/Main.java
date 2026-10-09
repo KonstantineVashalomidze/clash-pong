@@ -16,7 +16,7 @@ import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HU
 public class Main {
     static void main() {
         EventQueue.invokeLater(() -> {
-            int width = 800, height = 600;
+            int width = 800, height = 729;
             JFrame frame = new JFrame("Pong");
 
             World world = new World(
