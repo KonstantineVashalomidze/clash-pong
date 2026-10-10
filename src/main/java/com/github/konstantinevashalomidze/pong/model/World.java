@@ -7,6 +7,14 @@ import java.util.stream.Collectors;
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 
 public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, int leftScore, int rightScore, Energy leftEnergy, Energy rightEnergy, Hand leftHand, Hand rightHand, List<Effect> leftEffects, List<Effect> rightEffects) {
+    private static final int PADDLE_SPEED = 300;
+    private static final int SERVE_SPEED_X = 200;
+    private static final int SERVE_SPEED_Y = 120;
+    private static final double BIG_PADDLE_HEIGHT_SCALE = 1.5;
+    private static final double SHRINK_HEIGHT_SCALE = 0.5;
+    private static final double SMASH_TIME_SCALE = 1.6;
+    private static final double SLOW_FIELD_TIME_SCALE = 0.5;
+
     public World {
         if (leftScore < 0) {
             throw new WorldArgumentException("Left score cannot be negative");
@@ -26,11 +34,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         boolean leftIsFrozen = hasEffect(leftEffects, Card.FREEZE);
         Paddle left = null;
         if (actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN) && !leftIsFrozen) {
-            left = this.left.moveBy(-300 * dt);
+            left = this.left.moveBy(-PADDLE_SPEED * dt);
         }
 
         if (actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN) && !leftIsFrozen) {
-            left = this.left.moveBy(300 * dt);
+            left = this.left.moveBy(PADDLE_SPEED * dt);
         }
 
         if (left == null) {
@@ -46,11 +54,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         boolean rightIsFrozen = hasEffect(rightEffects, Card.FREEZE);
         Paddle right = null;
         if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN) && !rightIsFrozen) {
-            right = this.right.moveBy(-300 * dt);
+            right = this.right.moveBy(-PADDLE_SPEED * dt);
         }
 
         if (actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN) && !rightIsFrozen) {
-            right = this.right.moveBy(300 * dt);
+            right = this.right.moveBy(PADDLE_SPEED * dt);
         }
 
         if (right == null) {
@@ -80,7 +88,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                 rightScore += 1;
                 ball = new Ball(
                         new Vec2(playfield.width() / 2, playfield.height() / 2),
-                        new Vec2(200, 120),
+                        new Vec2(SERVE_SPEED_X, SERVE_SPEED_Y),
                         ball().radius()
                 );
             }
@@ -92,7 +100,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             leftScore += 1;
             ball = new Ball(
                     new Vec2(playfield.width() / 2, playfield.height() / 2),
-                    new Vec2(-200, 120),
+                    new Vec2(-SERVE_SPEED_X, SERVE_SPEED_Y),
                     ball().radius()
             );
         }
@@ -173,30 +181,14 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         }
 
         switch (leftPlayedCard) {
-            case BARRICADE -> {
-                refresh(leftEffects, Card.BARRICADE, true);
-            }
-            case BIG_PADDLE -> {
-                refresh(leftEffects, Card.BIG_PADDLE, true);
-            }
-            case SHRINK -> {
-                refresh(rightEffects, Card.SHRINK, true);
-            }
-            case FREEZE -> {
-                refresh(rightEffects, Card.FREEZE, true);
-            }
-            case SMASH -> {
-                refresh(leftEffects, Card.SMASH, false);
-            }
-            case SLOW_FIELD -> {
-                refresh(leftEffects, Card.SLOW_FIELD, true);
-            }
-            case STRAFE -> {
-                refresh(leftEffects, Card.STRAFE, true);
-            }
-            case GOAL_SHIELD -> {
-                refresh(leftEffects, Card.GOAL_SHIELD, true);
-            }
+            case BARRICADE -> refresh(leftEffects, Card.BARRICADE, true);
+            case BIG_PADDLE -> refresh(leftEffects, Card.BIG_PADDLE, true);
+            case SHRINK -> refresh(rightEffects, Card.SHRINK, true);
+            case FREEZE -> refresh(rightEffects, Card.FREEZE, true);
+            case SMASH -> refresh(leftEffects, Card.SMASH, false);
+            case SLOW_FIELD -> refresh(leftEffects, Card.SLOW_FIELD, true);
+            case STRAFE -> refresh(leftEffects, Card.STRAFE, true);
+            case GOAL_SHIELD -> refresh(leftEffects, Card.GOAL_SHIELD, true);
             case null, default -> {
 
             }
@@ -236,12 +228,8 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                 case BARRICADE -> {
 
                 }
-                case BIG_PADDLE -> {
-                    paddle = paddle.scaleHeight(1.5);
-                }
-                case SHRINK -> {
-                    paddle = paddle.scaleHeight(0.5);
-                }
+                case BIG_PADDLE -> paddle = paddle.scaleHeight(BIG_PADDLE_HEIGHT_SCALE);
+                case SHRINK -> paddle = paddle.scaleHeight(SHRINK_HEIGHT_SCALE);
                 case FREEZE -> {
 
                 }
@@ -274,11 +262,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         double scale = 1;
         if (leftEffects.stream().anyMatch(e -> e.card() == Card.SMASH && e.active())
                 || rightEffects.stream().anyMatch(e -> e.card() == Card.SMASH && e.active())) {
-            scale *= 1.6;
+            scale *= SMASH_TIME_SCALE;
         }
         if (hasEffect(leftEffects, Card.SLOW_FIELD)
                 || hasEffect(rightEffects, Card.SLOW_FIELD)) {
-            scale *= 0.5;
+            scale *= SLOW_FIELD_TIME_SCALE;
         }
         return scale;
     }
