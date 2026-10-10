@@ -235,7 +235,7 @@ public class GamePanel extends JPanel {
         int leftPaddleHeight = (int) leftPaddle.height();
 
         // Right paddle
-        Paddle rightPaddle = world.right();
+        Paddle rightPaddle = world.effectiveRight();
         int rightPaddleCenterX = (int) rightPaddle.center().x();
         int rightPaddleCenterY = (int) rightPaddle.center().y();
         int rightPaddleWidth = (int) rightPaddle.width();

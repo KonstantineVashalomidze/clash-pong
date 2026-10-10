@@ -55,7 +55,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             right = this.right;
         }
 
-        right = right.clampTo(playfield);
+        right = new Paddle(
+                applyEffects(right, this.rightEffects).clampTo(playfield).center(),
+                right.width(),
+                right.height()
+        );
 
 
         // Ball movement
@@ -84,7 +88,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         boolean leftSmashHit = false;
         boolean rightSmashHit = false;
         boolean wasLeftHit = ball.overlaps(effectiveLeft()) && ball.velocity().x() < 0;
-        boolean wasRightHit = ball.overlaps(right) && ball.velocity().x() > 0;
+        boolean wasRightHit = ball.overlaps(effectiveRight()) && ball.velocity().x() > 0;
         if (wasLeftHit || wasRightHit) {
             if (wasLeftHit
                     && leftEffects.stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
@@ -161,8 +165,8 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                 leftEffects.add(new Effect(Card.BIG_PADDLE, Card.BIG_PADDLE.duration(), true));
             }
             case SHRINK -> {
-                leftEffects.removeIf(e -> e.card() == Card.SHRINK);
-                leftEffects.add(new Effect(Card.SHRINK, Card.SHRINK.duration(), true));
+                rightEffects.removeIf(e -> e.card() == Card.SHRINK);
+                rightEffects.add(new Effect(Card.SHRINK, Card.SHRINK.duration(), true));
             }
             case FREEZE -> {
                 leftEffects.removeIf(e -> e.card() == Card.FREEZE);
@@ -207,6 +211,10 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
     public Paddle effectiveLeft() {
         return applyEffects(left, leftEffects);
+    }
+
+    public Paddle effectiveRight() {
+        return applyEffects(right, rightEffects);
     }
 
     private Paddle applyEffects(Paddle paddle, List<Effect> effects) {
