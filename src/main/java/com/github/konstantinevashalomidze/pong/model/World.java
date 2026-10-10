@@ -36,12 +36,6 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             left = this.left;
         }
 
-        left = new Paddle(
-                applyEffects(left, this.leftEffects).clampTo(playfield).center(),
-                left.width(),
-                left.height()
-        );
-
         Paddle right = null;
         if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN)) {
             right = this.right.moveBy(-300 * dt);
@@ -59,7 +53,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
 
         // Ball movement
-        Ball ball = this.ball.advance(dt).bounceOffWalls(playfield);
+        Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
         int rightScore = this.rightScore;
         if (ball.isOutLeft(playfield)) {
             rightScore += 1;
@@ -139,35 +133,35 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         switch (leftPlayedCard) {
             case BARRICADE -> {
                 leftEffects.removeIf(e -> e.card() == Card.BARRICADE);
-                leftEffects.add(new Effect(Card.BARRICADE, 6.0));
+                leftEffects.add(new Effect(Card.BARRICADE, Card.BARRICADE.duration()));
             }
             case BIG_PADDLE -> {
                 leftEffects.removeIf(e -> e.card() == Card.BIG_PADDLE);
-                leftEffects.add(new Effect(Card.BIG_PADDLE, 6.0));
+                leftEffects.add(new Effect(Card.BIG_PADDLE, Card.BIG_PADDLE.duration()));
             }
             case SHRINK -> {
                 leftEffects.removeIf(e -> e.card() == Card.SHRINK);
-                leftEffects.add(new Effect(Card.SHRINK, 6.0));
+                leftEffects.add(new Effect(Card.SHRINK, Card.SHRINK.duration()));
             }
             case FREEZE -> {
                 leftEffects.removeIf(e -> e.card() == Card.FREEZE);
-                leftEffects.add(new Effect(Card.FREEZE, 6.0));
+                leftEffects.add(new Effect(Card.FREEZE, Card.FREEZE.duration()));
             }
             case SMASH -> {
                 leftEffects.removeIf(e -> e.card() == Card.SMASH);
-                leftEffects.add(new Effect(Card.SMASH, 6.0));
+                leftEffects.add(new Effect(Card.SMASH, Card.SMASH.duration()));
             }
             case SLOW_FIELD -> {
                 leftEffects.removeIf(e -> e.card() == Card.SLOW_FIELD);
-                leftEffects.add(new Effect(Card.SLOW_FIELD, 6.0));
+                leftEffects.add(new Effect(Card.SLOW_FIELD, Card.SLOW_FIELD.duration()));
             }
             case STRAFE -> {
                 leftEffects.removeIf(e -> e.card() == Card.STRAFE);
-                leftEffects.add(new Effect(Card.STRAFE, 6.0));
+                leftEffects.add(new Effect(Card.STRAFE, Card.STRAFE.duration()));
             }
             case GOAL_SHIELD -> {
                 leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
-                leftEffects.add(new Effect(Card.GOAL_SHIELD, 6.0));
+                leftEffects.add(new Effect(Card.GOAL_SHIELD, Card.GOAL_SHIELD.duration()));
             }
             case null, default -> {
 
@@ -212,6 +206,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                 case SMASH -> {
                 }
                 case SLOW_FIELD -> {
+
                 }
                 case STRAFE -> {
                 }
@@ -221,6 +216,15 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             }
         }
         return paddle;
+    }
+
+    private double ballTimeScale() {
+        if (leftEffects.stream().anyMatch(e -> e.card() == Card.SLOW_FIELD)
+            || rightEffects.stream().anyMatch(e -> e.card() == Card.SLOW_FIELD)) {
+            return 0.5;
+        } else {
+            return 1;
+        }
     }
 
 }
