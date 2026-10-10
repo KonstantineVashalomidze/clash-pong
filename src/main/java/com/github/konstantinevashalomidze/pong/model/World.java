@@ -36,7 +36,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             left = this.left;
         }
 
-        left = left.clampTo(playfield);
+        left = new Paddle(
+                applyEffects(left, this.leftEffects).clampTo(playfield).center(),
+                left.width(),
+                left.height()
+        );
 
         Paddle right = null;
         if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN)) {
