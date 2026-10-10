@@ -165,7 +165,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                 leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
                 leftEffects.add(new Effect(Card.GOAL_SHIELD, 6.0));
             }
-            case null -> {
+            case null, default -> {
 
             }
         }
@@ -187,4 +187,32 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             rightEffects
         );
     }
+
+    private static Paddle applyEffects(Paddle paddle, List<Effect> effects) {
+        for (Effect effect : effects) {
+            switch (effect.card()) {
+                case BARRICADE -> {
+                }
+                case BIG_PADDLE -> {
+                    paddle = paddle.scaleHeight(1.5);
+                }
+                case SHRINK -> {
+                    paddle = paddle.scaleHeight(0.5);
+                }
+                case FREEZE -> {
+                }
+                case SMASH -> {
+                }
+                case SLOW_FIELD -> {
+                }
+                case STRAFE -> {
+                }
+                case GOAL_SHIELD -> {
+                }
+                case null, default -> {}
+            }
+        }
+        return paddle;
+    }
+
 }
