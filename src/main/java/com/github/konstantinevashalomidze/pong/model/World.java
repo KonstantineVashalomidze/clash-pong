@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 
-public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, int leftScore, int rightScore, Energy leftEnergy, Energy rightEnergy, Hand leftHand, Hand rightHand, List<Effect> leftEffects, List<Effect> rightEffects) {
+public record World(Playfield playfield, Ball ball, Player left, Player right) {
     private static final int PADDLE_SPEED = 300;
     private static final int SERVE_SPEED_X = 200;
     private static final int SERVE_SPEED_Y = 120;
@@ -15,58 +15,45 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
     private static final double SMASH_TIME_SCALE = 1.6;
     private static final double SLOW_FIELD_TIME_SCALE = 0.5;
 
-    public World {
-        if (leftScore < 0) {
-            throw new WorldArgumentException("Left score cannot be negative");
-        }
-
-        if (rightScore < 0) {
-            throw new  WorldArgumentException("Right score cannot be negative");
-        }
-
-        leftEffects = List.copyOf(leftEffects);
-        rightEffects = List.copyOf(rightEffects);
-    }
-
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
         // Paddle movement
-        boolean leftIsFrozen = hasEffect(leftEffects, Card.FREEZE);
+        boolean leftIsFrozen = hasEffect(this.left.effects(), Card.FREEZE);
         Paddle left = null;
         if (actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN) && !leftIsFrozen) {
-            left = this.left.moveBy(-PADDLE_SPEED * dt);
+            left = this.left.paddle().moveBy(-PADDLE_SPEED * dt);
         }
 
         if (actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN) && !leftIsFrozen) {
-            left = this.left.moveBy(PADDLE_SPEED * dt);
+            left = this.left.paddle().moveBy(PADDLE_SPEED * dt);
         }
 
         if (left == null) {
-            left = this.left;
+            left = this.left.paddle();
         }
 
         left = new Paddle(
-                applyEffects(left, this.leftEffects).clampTo(playfield).center(),
+                applyEffects(left, this.left.effects()).clampTo(playfield).center(),
                 left.width(),
                 left.height()
         );
 
-        boolean rightIsFrozen = hasEffect(rightEffects, Card.FREEZE);
+        boolean rightIsFrozen = hasEffect(this.right.effects(), Card.FREEZE);
         Paddle right = null;
         if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN) && !rightIsFrozen) {
-            right = this.right.moveBy(-PADDLE_SPEED * dt);
+            right = this.right.paddle().moveBy(-PADDLE_SPEED * dt);
         }
 
         if (actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN) && !rightIsFrozen) {
-            right = this.right.moveBy(PADDLE_SPEED * dt);
+            right = this.right.paddle().moveBy(PADDLE_SPEED * dt);
         }
 
         if (right == null) {
-            right = this.right;
+            right = this.right.paddle();
         }
 
         right = new Paddle(
-                applyEffects(right, this.rightEffects).clampTo(playfield).center(),
+                applyEffects(right, this.right.effects()).clampTo(playfield).center(),
                 right.width(),
                 right.height()
         );
@@ -75,9 +62,9 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         // Ball movement
         boolean leftShieldUsed = false;
         Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
-        int rightScore = this.rightScore;
+        int rightScore = this.right.score();
         if (ball.isOutLeft(playfield)) {
-            if (hasEffect(leftEffects, Card.GOAL_SHIELD)) {
+            if (hasEffect(this.left.effects(), Card.GOAL_SHIELD)) {
                 leftShieldUsed = true;
                 ball = new Ball(
                         ball.position(),
@@ -95,7 +82,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
         }
 
-        int leftScore = this.leftScore;
+        int leftScore = this.left.score();
         if (ball.isOutRight(playfield)) {
             leftScore += 1;
             ball = new Ball(
@@ -112,11 +99,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         boolean wasRightHit = ball.overlaps(effectiveRight()) && ball.velocity().x() > 0;
         if (wasLeftHit || wasRightHit) {
             if (wasLeftHit
-                    && leftEffects.stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
+                    && this.left.effects().stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
                 leftSmashHit = true;
             }
             if (wasRightHit
-                    && rightEffects.stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
+                    && this.right.effects().stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
                 rightSmashHit = true;
             }
             ball = new Ball(
@@ -127,49 +114,49 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         }
 
         // Energy management
-        Energy leftEnergy = this.leftEnergy.refill(dt);
-        Energy rightEnergy = this.rightEnergy.refill(dt);
+        Energy leftEnergy = this.left.energy().refill(dt);
+        Energy rightEnergy = this.right.energy().refill(dt);
 
         // Card usages
         Hand leftHand = null;
         Card leftPlayedCard = null;
         if (actionPressedKeys.contains(F_DOWN)) {
-            if (leftEnergy.canAfford(this.leftHand.hand().get(0).cost())) {
-                leftPlayedCard = this.leftHand.hand().get(0);
-                leftHand = this.leftHand.play(0);
-                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(0).cost());
+            if (leftEnergy.canAfford(this.left.hand().cards().get(0).cost())) {
+                leftPlayedCard = this.left.hand().cards().get(0);
+                leftHand = this.left.hand().play(0);
+                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(0).cost());
             }
         }
 
         if (actionPressedKeys.contains(G_DOWN)) {
-            if (leftEnergy.canAfford(this.leftHand.hand().get(1).cost())) {
-                leftPlayedCard = this.leftHand.hand().get(1);
-                leftHand = this.leftHand.play(1);
-                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(1).cost());
+            if (leftEnergy.canAfford(this.left.hand().cards().get(1).cost())) {
+                leftPlayedCard = this.left.hand().cards().get(1);
+                leftHand = this.left.hand().play(1);
+                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(1).cost());
             }
         }
 
         if (actionPressedKeys.contains(H_DOWN)) {
-            if (leftEnergy.canAfford(this.leftHand.hand().get(2).cost())) {
-                leftPlayedCard = this.leftHand.hand().get(2);
-                leftHand = this.leftHand.play(2);
-                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(2).cost());
+            if (leftEnergy.canAfford(this.left.hand().cards().get(2).cost())) {
+                leftPlayedCard = this.left.hand().cards().get(2);
+                leftHand = this.left.hand().play(2);
+                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(2).cost());
             }
         }
 
         if (actionPressedKeys.contains(J_DOWN)) {
-            if (leftEnergy.canAfford(this.leftHand.hand().get(3).cost())) {
-                leftPlayedCard = this.leftHand.hand().get(3);
-                leftHand = this.leftHand.play(3);
-                leftEnergy = leftEnergy.spend(this.leftHand.hand().get(3).cost());
+            if (leftEnergy.canAfford(this.left.hand().cards().get(3).cost())) {
+                leftPlayedCard = this.left.hand().cards().get(3);
+                leftHand = this.left.hand().play(3);
+                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(3).cost());
             }
         }
 
-        leftHand = leftHand == null ? this.leftHand : leftHand;
+        leftHand = leftHand == null ? this.left.hand() : leftHand;
 
         // Manage effects
-        List<Effect> leftEffects = this.leftEffects.stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
-        List<Effect> rightEffects = this.rightEffects.stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
+        List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
+        List<Effect> rightEffects = this.right().effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
 
         if (leftSmashHit) {
             leftEffects.removeIf(e -> e.card() == Card.SMASH && !e.active());
@@ -197,16 +184,20 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         return new World(
             playfield,
             ball,
-            left,
-            right,
-            leftScore,
-            rightScore,
-            leftEnergy,
-            rightEnergy,
-            leftHand,
-            rightHand,
-            leftEffects,
-            rightEffects
+            new Player(
+                left,
+                leftScore,
+                leftEnergy,
+                leftHand,
+                leftEffects
+            ),
+            new Player(
+                    right,
+                    rightScore,
+                    rightEnergy,
+                    this.right.hand(),
+                    rightEffects
+            )
         );
     }
 
@@ -215,11 +206,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
     }
 
     public Paddle effectiveLeft() {
-        return applyEffects(left, leftEffects);
+        return applyEffects(left.paddle(), this.left.effects());
     }
 
     public Paddle effectiveRight() {
-        return applyEffects(right, rightEffects);
+        return applyEffects(right.paddle(), this.right.effects());
     }
 
     private Paddle applyEffects(Paddle paddle, List<Effect> effects) {
@@ -260,12 +251,12 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
     private double ballTimeScale() {
         double scale = 1;
-        if (leftEffects.stream().anyMatch(e -> e.card() == Card.SMASH && e.active())
-                || rightEffects.stream().anyMatch(e -> e.card() == Card.SMASH && e.active())) {
+        if (this.left.effects().stream().anyMatch(e -> e.card() == Card.SMASH && e.active())
+                || this.right.effects().stream().anyMatch(e -> e.card() == Card.SMASH && e.active())) {
             scale *= SMASH_TIME_SCALE;
         }
-        if (hasEffect(leftEffects, Card.SLOW_FIELD)
-                || hasEffect(rightEffects, Card.SLOW_FIELD)) {
+        if (hasEffect(this.left.effects(), Card.SLOW_FIELD)
+                || hasEffect(this.right.effects(), Card.SLOW_FIELD)) {
             scale *= SLOW_FIELD_TIME_SCALE;
         }
         return scale;

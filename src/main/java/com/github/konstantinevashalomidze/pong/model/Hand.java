@@ -3,25 +3,25 @@ package com.github.konstantinevashalomidze.pong.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public record Hand(List<Card> hand, List<Card> queue) {
+public record Hand(List<Card> cards, List<Card> queue) {
     public Hand {
-        if (hand.size() != 4) {
-            throw new HandArgumentException("Invalid hand argument");
+        if (cards.size() != 4) {
+            throw new HandArgumentException("Invalid cards argument");
         }
 
         if (queue.size() != 4) {
             throw new HandArgumentException("Invalid queue argument");
         }
 
-        hand = List.copyOf(hand);
+        cards = List.copyOf(cards);
         queue = List.copyOf(queue);
     }
 
     public Hand play(int slot) {
-        if (slot < 0 || slot >= hand.size()) {
+        if (slot < 0 || slot >= cards.size()) {
             throw new HandArgumentException("Invalid slot argument");
         }
-        List<Card> hand = new ArrayList<>(this.hand);
+        List<Card> hand = new ArrayList<>(this.cards);
         List<Card> queue = new ArrayList<>(this.queue);
         Card cardFromHand = hand.remove(slot);
         Card cardFromQueue = queue.removeFirst();

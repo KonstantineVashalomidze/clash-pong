@@ -5,7 +5,7 @@ import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 public class ComputerPlayer {
     public static String makeAction(World world) {
         Ball ball = world.ball();
-        Paddle right = world.right();
+        Paddle right = world.right().paddle();
 
 
         if (right.center().y() > ball.position().y() + 10) {

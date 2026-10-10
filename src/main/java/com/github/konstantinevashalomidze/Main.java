@@ -23,18 +23,22 @@ public class Main {
             World world = new World(
                     new Playfield(800, 600),
                     new Ball(new Vec2(400, 300), new Vec2(200, 120), 8),
-                    new Paddle(new Vec2(30, 300), 10, 80),
-                    new Paddle(new Vec2(770, 300), 10, 80),
-                    0,
-                    0,
-                    new Energy(5),
-                    new Energy(5),
-                    new Hand(List.of(BARRICADE, BIG_PADDLE, SHRINK, FREEZE),
-                            List.of(SMASH, SLOW_FIELD, STRAFE, GOAL_SHIELD)),
-                    new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
-                            List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
-                    List.of(),
-                    List.of()
+                    new Player(
+                            new Paddle(new Vec2(30, 300), 10, 80),
+                            0,
+                            new Energy(5),
+                            new Hand(List.of(BARRICADE, BIG_PADDLE, SHRINK, FREEZE),
+                                    List.of(SMASH, SLOW_FIELD, STRAFE, GOAL_SHIELD)),
+                            List.of()
+                    ),
+                    new Player(
+                            new Paddle(new Vec2(770, 300), 10, 80),
+                            0,
+                            new Energy(5),
+                            new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
+                                    List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
+                            List.of()
+                    )
             );
 
             GamePanel gamePanel = new GamePanel(world);

@@ -266,8 +266,8 @@ public class GamePanel extends JPanel {
         g.setColor(Color.WHITE);
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
 
-        g.drawString(Integer.toString(world.leftScore()), 350, 50);
-        g.drawString(Integer.toString(world.rightScore()), 430, 50);
+        g.drawString(Integer.toString(world.left().score()), 350, 50);
+        g.drawString(Integer.toString(world.right().score()), 430, 50);
 
         // Draw energy bars
         // Outline
@@ -280,7 +280,7 @@ public class GamePanel extends JPanel {
         g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
 
         g.setColor(Color.WHITE);
-        Energy leftEnergy = world.leftEnergy();
+        Energy leftEnergy = world.left().energy();
         g.fillRect(20, 660, (int) (leftEnergy.amount() / 10 * 200), 20);
         g.drawString(String.valueOf((int) Math.floor(leftEnergy.amount())), 230, 660 + 20);
         for (int i = 1; i <= 9; i++) {
@@ -289,7 +289,7 @@ public class GamePanel extends JPanel {
         }
 
         g.setColor(Color.WHITE);
-        Energy rightEnergy = world.rightEnergy();
+        Energy rightEnergy = world.right().energy();
         g.fillRect(580, 660, (int) (rightEnergy.amount() / 10 * 200), 20);
         for (int i = 1; i <= 9; i++) {
             g.setColor(Color.BLACK);
@@ -301,8 +301,8 @@ public class GamePanel extends JPanel {
 
 
         // Hand
-        drawHand(g, world.leftHand(), 20);
-        drawHand(g, world.rightHand(), 485);
+        drawHand(g, world.left().hand(), 20);
+        drawHand(g, world.right().hand(), 485);
 
         // For linux
         Toolkit.getDefaultToolkit().sync();
@@ -311,11 +311,11 @@ public class GamePanel extends JPanel {
 
     private void drawHand(Graphics g, Hand hand, int startX) {
         g.setColor(Color.WHITE);
-        for (int i = 0; i < hand.hand().size(); i++) {
+        for (int i = 0; i < hand.cards().size(); i++) {
             int cardX = startX + i * 75;
             g.drawRect(startX + i * 75, 610, 70, 44);
-            g.drawString(hand.hand().get(i).name().substring(0, 3), cardX + 4, 627);
-            g.drawString(Integer.toString(hand.hand().get(i).cost()), cardX + 4, 645);
+            g.drawString(hand.cards().get(i).name().substring(0, 3), cardX + 4, 627);
+            g.drawString(Integer.toString(hand.cards().get(i).cost()), cardX + 4, 645);
         }
     }
 
