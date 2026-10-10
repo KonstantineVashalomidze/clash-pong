@@ -77,7 +77,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         }
 
         // Bounce ball off the paddles
-        if (ball.overlaps(left) && ball.velocity().x() < 0
+        if (ball.overlaps(effectiveLeft()) && ball.velocity().x() < 0
                 || ball.overlaps(right) && ball.velocity().x() > 0) {
             ball = new Ball(
                 ball.position(),
