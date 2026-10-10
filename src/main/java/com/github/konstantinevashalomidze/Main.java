@@ -5,6 +5,7 @@ import com.github.konstantinevashalomidze.pong.ui.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,7 @@ import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HU
 public class Main {
     static void main() {
         EventQueue.invokeLater(() -> {
-            int width = 800, height = 729;
+            int width = 800, height = 720;
             JFrame frame = new JFrame("Pong");
 
             World world = new World(
@@ -31,7 +32,9 @@ public class Main {
                     new Hand(List.of(BARRICADE, BIG_PADDLE, SHRINK, FREEZE),
                             List.of(SMASH, SLOW_FIELD, STRAFE, GOAL_SHIELD)),
                     new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
-                            List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE))
+                            List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
+                    List.of(new Effect(BIG_PADDLE, 2.0)),
+                    List.of(new Effect(BIG_PADDLE, 2.0))
             );
 
             GamePanel gamePanel = new GamePanel(world);

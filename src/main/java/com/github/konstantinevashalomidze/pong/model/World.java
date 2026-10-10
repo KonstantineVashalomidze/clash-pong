@@ -1,10 +1,11 @@
 package com.github.konstantinevashalomidze.pong.model;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 
-public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, int leftScore, int rightScore, Energy leftEnergy, Energy rightEnergy, Hand leftHand, Hand rightHand) {
+public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, int leftScore, int rightScore, Energy leftEnergy, Energy rightEnergy, Hand leftHand, Hand rightHand, List<Effect> leftEffects, List<Effect> rightEffects) {
     public World {
         if (leftScore < 0) {
             throw new WorldArgumentException("Left score cannot be negative");
@@ -13,6 +14,9 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         if (rightScore < 0) {
             throw new  WorldArgumentException("Right score cannot be negative");
         }
+
+        leftEffects = List.copyOf(leftEffects);
+        rightEffects = List.copyOf(rightEffects);
     }
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
@@ -117,6 +121,12 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
         leftHand = leftHand == null ? this.leftHand : leftHand;
 
+
+        // Manage effects
+        List<Effect> leftEffects = this.leftEffects.stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).toList();
+        List<Effect> rightEffects = this.rightEffects.stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).toList();
+
+
         return new World(
             playfield,
             ball,
@@ -127,7 +137,9 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             leftEnergy,
             rightEnergy,
             leftHand,
-            rightHand
+            rightHand,
+            leftEffects,
+            rightEffects
         );
     }
 }

@@ -302,6 +302,7 @@ public class GamePanel extends JPanel {
 
         // Hand
         drawHand(g, world.leftHand(), 20);
+        drawHand(g, world.rightHand(), 485);
 
         // For linux
         Toolkit.getDefaultToolkit().sync();
