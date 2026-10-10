@@ -188,7 +188,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         );
     }
 
-    private static Paddle applyEffects(Paddle paddle, List<Effect> effects) {
+    public Paddle effectiveLeft() {
+        return applyEffects(left, leftEffects);
+    }
+
+    private Paddle applyEffects(Paddle paddle, List<Effect> effects) {
         for (Effect effect : effects) {
             switch (effect.card()) {
                 case BARRICADE -> {

@@ -228,7 +228,7 @@ public class GamePanel extends JPanel {
         );
 
         // Left paddle
-        Paddle leftPaddle = world.left();
+        Paddle leftPaddle = world.effectiveLeft();
         int leftPaddleCenterX = (int) leftPaddle.center().x();
         int leftPaddleCenterY = (int) leftPaddle.center().y();
         int leftPaddleWidth = (int) leftPaddle.width();
