@@ -65,15 +65,26 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
 
         // Ball movement
+        boolean leftShieldUsed = false;
         Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
         int rightScore = this.rightScore;
         if (ball.isOutLeft(playfield)) {
-            rightScore += 1;
-            ball = new Ball(
-                    new Vec2(playfield.width() / 2, playfield.height() / 2),
-                    new Vec2(200, 120),
-                    ball().radius()
-            );
+            if (leftEffects.stream().anyMatch(e -> e.card() == Card.GOAL_SHIELD)) {
+                leftShieldUsed = true;
+                ball = new Ball(
+                        ball.position(),
+                        new Vec2((-1) * ball.velocity().x(), ball.velocity().y()),
+                        ball.radius()
+                );
+            } else {
+                rightScore += 1;
+                ball = new Ball(
+                        new Vec2(playfield.width() / 2, playfield.height() / 2),
+                        new Vec2(200, 120),
+                        ball().radius()
+                );
+            }
+
         }
 
         int leftScore = this.leftScore;
@@ -157,6 +168,10 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             leftEffects.add(new Effect(Card.SMASH, Card.SMASH.duration(), true));
         }
 
+        if (leftShieldUsed) {
+            leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
+        }
+
         switch (leftPlayedCard) {
             case BARRICADE -> {
                 leftEffects.removeIf(e -> e.card() == Card.BARRICADE);
@@ -223,6 +238,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         for (Effect effect : effects) {
             switch (effect.card()) {
                 case BARRICADE -> {
+
                 }
                 case BIG_PADDLE -> {
                     paddle = paddle.scaleHeight(1.5);
@@ -231,17 +247,23 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                     paddle = paddle.scaleHeight(0.5);
                 }
                 case FREEZE -> {
+
                 }
                 case SMASH -> {
+
                 }
                 case SLOW_FIELD -> {
 
                 }
                 case STRAFE -> {
+
                 }
                 case GOAL_SHIELD -> {
+
                 }
-                case null, default -> {}
+                case null, default -> {
+
+                }
             }
         }
         return paddle;

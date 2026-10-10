@@ -8,7 +8,7 @@ public enum Card {
     SMASH(2, 5),
     SLOW_FIELD(2, 3),
     STRAFE(3, 6),
-    GOAL_SHIELD(4, 0);
+    GOAL_SHIELD(4, 10);
 
     private final int cost;
     private final double duration;
