@@ -22,13 +22,14 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
-        Paddle left = null;
         // Paddle movement
-        if (actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN)) {
+        boolean leftIsFrozen = leftEffects.stream().anyMatch(e -> e.card() == Card.FREEZE);
+        Paddle left = null;
+        if (actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN) && !leftIsFrozen) {
             left = this.left.moveBy(-300 * dt);
         }
 
-        if (actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN)) {
+        if (actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN) && !leftIsFrozen) {
             left = this.left.moveBy(300 * dt);
         }
 
@@ -42,12 +43,13 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                 left.height()
         );
 
+        boolean rightIsFrozen = rightEffects.stream().anyMatch(e -> e.card() == Card.FREEZE);
         Paddle right = null;
-        if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN)) {
+        if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN) && !rightIsFrozen) {
             right = this.right.moveBy(-300 * dt);
         }
 
-        if (actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN)) {
+        if (actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN) && !rightIsFrozen) {
             right = this.right.moveBy(300 * dt);
         }
 
@@ -169,8 +171,8 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
                 rightEffects.add(new Effect(Card.SHRINK, Card.SHRINK.duration(), true));
             }
             case FREEZE -> {
-                leftEffects.removeIf(e -> e.card() == Card.FREEZE);
-                leftEffects.add(new Effect(Card.FREEZE, Card.FREEZE.duration(), true));
+                rightEffects.removeIf(e -> e.card() == Card.FREEZE);
+                rightEffects.add(new Effect(Card.FREEZE, Card.FREEZE.duration(), true));
             }
             case SMASH -> {
                 leftEffects.removeIf(e -> e.card() == Card.SMASH);
