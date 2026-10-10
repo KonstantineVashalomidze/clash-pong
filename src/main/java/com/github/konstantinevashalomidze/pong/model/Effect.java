@@ -1,6 +1,6 @@
 package com.github.konstantinevashalomidze.pong.model;
 
-public record Effect(Card card, double remainingSeconds) {
+public record Effect(Card card, double remainingSeconds, boolean active) {
 
     public Effect {
         if (Double.isNaN(remainingSeconds)) throw new EffectArgumentException("Remaining time is NaN");
@@ -8,7 +8,7 @@ public record Effect(Card card, double remainingSeconds) {
     }
 
     public Effect tick(double dt) {
-        return new Effect(card, remainingSeconds - dt);
+        return new Effect(card, remainingSeconds - dt, active);
     }
 
     public boolean isExpired() {

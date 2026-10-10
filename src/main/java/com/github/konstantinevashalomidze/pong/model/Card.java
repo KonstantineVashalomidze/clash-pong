@@ -5,7 +5,7 @@ public enum Card {
     BIG_PADDLE(3, 6),
     SHRINK(3, 6),
     FREEZE(4, 1),
-    SMASH(2, 0),
+    SMASH(2, 5),
     SLOW_FIELD(2, 3),
     STRAFE(3, 6),
     GOAL_SHIELD(4, 0);

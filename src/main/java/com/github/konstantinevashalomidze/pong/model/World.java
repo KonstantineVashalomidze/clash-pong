@@ -36,6 +36,12 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             left = this.left;
         }
 
+        left = new Paddle(
+                applyEffects(left, this.leftEffects).clampTo(playfield).center(),
+                left.width(),
+                left.height()
+        );
+
         Paddle right = null;
         if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN)) {
             right = this.right.moveBy(-300 * dt);
@@ -75,8 +81,19 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         }
 
         // Bounce ball off the paddles
-        if (ball.overlaps(effectiveLeft()) && ball.velocity().x() < 0
-                || ball.overlaps(right) && ball.velocity().x() > 0) {
+        boolean leftSmashHit = false;
+        boolean rightSmashHit = false;
+        boolean wasLeftHit = ball.overlaps(effectiveLeft()) && ball.velocity().x() < 0;
+        boolean wasRightHit = ball.overlaps(right) && ball.velocity().x() > 0;
+        if (wasLeftHit || wasRightHit) {
+            if (wasLeftHit
+                    && leftEffects.stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
+                leftSmashHit = true;
+            }
+            if (wasRightHit
+                    && rightEffects.stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
+                rightSmashHit = true;
+            }
             ball = new Ball(
                 ball.position(),
                 new Vec2((-1) * ball.velocity().x(), ball.velocity().y()),
@@ -129,46 +146,48 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         List<Effect> leftEffects = this.leftEffects.stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
         List<Effect> rightEffects = this.rightEffects.stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
 
+        if (leftSmashHit) {
+            leftEffects.removeIf(e -> e.card() == Card.SMASH && !e.active());
+            leftEffects.add(new Effect(Card.SMASH, Card.SMASH.duration(), true));
+        }
 
         switch (leftPlayedCard) {
             case BARRICADE -> {
                 leftEffects.removeIf(e -> e.card() == Card.BARRICADE);
-                leftEffects.add(new Effect(Card.BARRICADE, Card.BARRICADE.duration()));
+                leftEffects.add(new Effect(Card.BARRICADE, Card.BARRICADE.duration(), true));
             }
             case BIG_PADDLE -> {
                 leftEffects.removeIf(e -> e.card() == Card.BIG_PADDLE);
-                leftEffects.add(new Effect(Card.BIG_PADDLE, Card.BIG_PADDLE.duration()));
+                leftEffects.add(new Effect(Card.BIG_PADDLE, Card.BIG_PADDLE.duration(), true));
             }
             case SHRINK -> {
                 leftEffects.removeIf(e -> e.card() == Card.SHRINK);
-                leftEffects.add(new Effect(Card.SHRINK, Card.SHRINK.duration()));
+                leftEffects.add(new Effect(Card.SHRINK, Card.SHRINK.duration(), true));
             }
             case FREEZE -> {
                 leftEffects.removeIf(e -> e.card() == Card.FREEZE);
-                leftEffects.add(new Effect(Card.FREEZE, Card.FREEZE.duration()));
+                leftEffects.add(new Effect(Card.FREEZE, Card.FREEZE.duration(), true));
             }
             case SMASH -> {
                 leftEffects.removeIf(e -> e.card() == Card.SMASH);
-                leftEffects.add(new Effect(Card.SMASH, Card.SMASH.duration()));
+                leftEffects.add(new Effect(Card.SMASH, Card.SMASH.duration(), false));
             }
             case SLOW_FIELD -> {
                 leftEffects.removeIf(e -> e.card() == Card.SLOW_FIELD);
-                leftEffects.add(new Effect(Card.SLOW_FIELD, Card.SLOW_FIELD.duration()));
+                leftEffects.add(new Effect(Card.SLOW_FIELD, Card.SLOW_FIELD.duration(), true));
             }
             case STRAFE -> {
                 leftEffects.removeIf(e -> e.card() == Card.STRAFE);
-                leftEffects.add(new Effect(Card.STRAFE, Card.STRAFE.duration()));
+                leftEffects.add(new Effect(Card.STRAFE, Card.STRAFE.duration(), true));
             }
             case GOAL_SHIELD -> {
                 leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
-                leftEffects.add(new Effect(Card.GOAL_SHIELD, Card.GOAL_SHIELD.duration()));
+                leftEffects.add(new Effect(Card.GOAL_SHIELD, Card.GOAL_SHIELD.duration(), true));
             }
             case null, default -> {
 
             }
         }
-
-
 
         return new World(
             playfield,
@@ -219,12 +238,16 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
     }
 
     private double ballTimeScale() {
-        if (leftEffects.stream().anyMatch(e -> e.card() == Card.SLOW_FIELD)
-            || rightEffects.stream().anyMatch(e -> e.card() == Card.SLOW_FIELD)) {
-            return 0.5;
-        } else {
-            return 1;
+        double scale = 1;
+        if (leftEffects.stream().anyMatch(e -> e.card() == Card.SMASH && e.active())
+                || rightEffects.stream().anyMatch(e -> e.card() == Card.SMASH && e.active())) {
+            scale *= 1.6;
         }
+        if (leftEffects.stream().anyMatch(e -> e.card() == Card.SLOW_FIELD)
+                || rightEffects.stream().anyMatch(e -> e.card() == Card.SLOW_FIELD)) {
+            scale *= 0.5;
+        }
+        return scale;
     }
 
 }
