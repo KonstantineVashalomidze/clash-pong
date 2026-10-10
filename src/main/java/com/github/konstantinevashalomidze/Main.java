@@ -33,8 +33,8 @@ public class Main {
                             List.of(SMASH, SLOW_FIELD, STRAFE, GOAL_SHIELD)),
                     new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
                             List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
-                    List.of(new Effect(BIG_PADDLE, 2.0)),
-                    List.of(new Effect(BIG_PADDLE, 2.0))
+                    List.of(),
+                    List.of()
             );
 
             GamePanel gamePanel = new GamePanel(world);
@@ -43,6 +43,7 @@ public class Main {
             Timer loop = new Timer(16, (e) -> {
                 if (gamePanel.getGameMode() == HUMAN_VS_HUMAN) {
                     gamePanel.setWorld(gamePanel.getWorld().step(0.016, gamePanel.getActionKeys(), gamePanel.getActionPressedKeys()));
+                    System.out.println(gamePanel.getWorld().leftEffects());
                 } else if (gamePanel.getGameMode() == HUMAN_VS_COMPUTER) {
                     Set<String> copiedActionKeys = new HashSet<>(gamePanel.getActionKeys());
                     String computerAction = ComputerPlayer.makeAction(gamePanel.getWorld());

@@ -1,23 +1,28 @@
 package com.github.konstantinevashalomidze.pong.model;
 
 public enum Card {
-    BARRICADE(3),
-    BIG_PADDLE(3),
-    SHRINK(3),
-    FREEZE(4),
-    SMASH(2),
-    SLOW_FIELD(2),
-    STRAFE(3),
-    GOAL_SHIELD(4);
+    BARRICADE(3, 0),
+    BIG_PADDLE(3, 6),
+    SHRINK(3, 6),
+    FREEZE(4, 1),
+    SMASH(2, 0),
+    SLOW_FIELD(2, 3),
+    STRAFE(3, 6),
+    GOAL_SHIELD(4, 0);
 
     private final int cost;
+    private final double duration;
 
-    Card(int cost) {
-        this.cost = cost;
+    Card(int cost, double duration) {
+        this.cost = cost; this.duration = duration;
     }
 
     public int cost() {
         return cost;
+    }
+
+    public double duration() {
+        return duration;
     }
 
 }
