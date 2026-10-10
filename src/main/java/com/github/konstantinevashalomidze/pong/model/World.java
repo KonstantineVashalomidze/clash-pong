@@ -174,36 +174,28 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
 
         switch (leftPlayedCard) {
             case BARRICADE -> {
-                leftEffects.removeIf(e -> e.card() == Card.BARRICADE);
-                leftEffects.add(new Effect(Card.BARRICADE, Card.BARRICADE.duration(), true));
+                refresh(leftEffects, Card.BARRICADE, true);
             }
             case BIG_PADDLE -> {
-                leftEffects.removeIf(e -> e.card() == Card.BIG_PADDLE);
-                leftEffects.add(new Effect(Card.BIG_PADDLE, Card.BIG_PADDLE.duration(), true));
+                refresh(leftEffects, Card.BIG_PADDLE, true);
             }
             case SHRINK -> {
-                rightEffects.removeIf(e -> e.card() == Card.SHRINK);
-                rightEffects.add(new Effect(Card.SHRINK, Card.SHRINK.duration(), true));
+                refresh(rightEffects, Card.SHRINK, true);
             }
             case FREEZE -> {
-                rightEffects.removeIf(e -> e.card() == Card.FREEZE);
-                rightEffects.add(new Effect(Card.FREEZE, Card.FREEZE.duration(), true));
+                refresh(rightEffects, Card.FREEZE, true);
             }
             case SMASH -> {
-                leftEffects.removeIf(e -> e.card() == Card.SMASH);
-                leftEffects.add(new Effect(Card.SMASH, Card.SMASH.duration(), false));
+                refresh(leftEffects, Card.SMASH, false);
             }
             case SLOW_FIELD -> {
-                leftEffects.removeIf(e -> e.card() == Card.SLOW_FIELD);
-                leftEffects.add(new Effect(Card.SLOW_FIELD, Card.SLOW_FIELD.duration(), true));
+                refresh(leftEffects, Card.SLOW_FIELD, true);
             }
             case STRAFE -> {
-                leftEffects.removeIf(e -> e.card() == Card.STRAFE);
-                leftEffects.add(new Effect(Card.STRAFE, Card.STRAFE.duration(), true));
+                refresh(leftEffects, Card.STRAFE, true);
             }
             case GOAL_SHIELD -> {
-                leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
-                leftEffects.add(new Effect(Card.GOAL_SHIELD, Card.GOAL_SHIELD.duration(), true));
+                refresh(leftEffects, Card.GOAL_SHIELD, true);
             }
             case null, default -> {
 
@@ -226,7 +218,7 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
         );
     }
 
-    private boolean hasEffect(List<Effect> effects, Card card) {
+    private static boolean hasEffect(List<Effect> effects, Card card) {
         return effects.stream().anyMatch(e -> e.card() == card);
     }
 
@@ -271,6 +263,11 @@ public record World(Playfield playfield, Ball ball, Paddle left, Paddle right, i
             }
         }
         return paddle;
+    }
+
+    private static void refresh(List<Effect> effects, Card card, boolean active) {
+        effects.removeIf(e -> e.card() == card);
+        effects.add(new Effect(card, card.duration(), active));
     }
 
     private double ballTimeScale() {
