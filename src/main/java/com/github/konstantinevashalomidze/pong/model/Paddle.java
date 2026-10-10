@@ -52,4 +52,9 @@ public record Paddle(Vec2 center, double width, double height) {
         return this;
     }
 
+    public Paddle scaleHeight(double factor) {
+        return new Paddle(center, width, height * factor);
+    }
+
+
 }
