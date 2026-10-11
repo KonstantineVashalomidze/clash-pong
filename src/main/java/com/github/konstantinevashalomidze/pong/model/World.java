@@ -106,19 +106,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
             leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
         }
 
-        switch (leftPlay.played()) {
-            case BARRICADE -> refresh(leftEffects, Card.BARRICADE, true);
-            case BIG_PADDLE -> refresh(leftEffects, Card.BIG_PADDLE, true);
-            case SHRINK -> refresh(rightEffects, Card.SHRINK, true);
-            case FREEZE -> refresh(rightEffects, Card.FREEZE, true);
-            case SMASH -> refresh(leftEffects, Card.SMASH, false);
-            case SLOW_FIELD -> refresh(leftEffects, Card.SLOW_FIELD, true);
-            case STRAFE -> refresh(leftEffects, Card.STRAFE, true);
-            case GOAL_SHIELD -> refresh(leftEffects, Card.GOAL_SHIELD, true);
-            case null, default -> {
-
-            }
-        }
+        applyPlayedCard(leftPlay.played(), leftEffects, rightEffects);
 
         return new World(
                 playfield,
@@ -138,6 +126,22 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                         rightEffects
                 )
         );
+    }
+
+    private void applyPlayedCard(Card played, List<Effect> ownEffects, List<Effect> opponentEffects) {
+        switch (played) {
+            case BARRICADE -> refresh(ownEffects, Card.BARRICADE, true);
+            case BIG_PADDLE -> refresh(ownEffects, Card.BIG_PADDLE, true);
+            case SHRINK -> refresh(opponentEffects, Card.SHRINK, true);
+            case FREEZE -> refresh(opponentEffects, Card.FREEZE, true);
+            case SMASH -> refresh(ownEffects, Card.SMASH, false);
+            case SLOW_FIELD -> refresh(ownEffects, Card.SLOW_FIELD, true);
+            case STRAFE -> refresh(ownEffects, Card.STRAFE, true);
+            case GOAL_SHIELD -> refresh(ownEffects, Card.GOAL_SHIELD, true);
+            case null, default -> {
+
+            }
+        }
     }
 
     private Paddle movedPaddle(Player player, boolean up, boolean down, double dt) {
@@ -206,7 +210,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         return paddle;
     }
 
-    private CardPlay playCard(Energy energy, Hand hand, Set<String> actionPressedKeys, List<String> cardKeys) {
+    private static CardPlay playCard(Energy energy, Hand hand, Set<String> actionPressedKeys, List<String> cardKeys) {
         Card playedCard = null;
         for (int i = 0; i < cardKeys.size(); i++) {
             var cardKey = cardKeys.get(i);
