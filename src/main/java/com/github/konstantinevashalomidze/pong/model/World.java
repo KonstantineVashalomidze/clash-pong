@@ -14,6 +14,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
     private static final double SHRINK_HEIGHT_SCALE = 0.5;
     private static final double SMASH_TIME_SCALE = 1.6;
     private static final double SLOW_FIELD_TIME_SCALE = 0.5;
+    private static final List<String> LEFT_CARD_KEYS = List.of(F_DOWN, G_DOWN, H_DOWN, J_DOWN);
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
@@ -90,41 +91,19 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         Energy rightEnergy = this.right.energy().refill(dt);
 
         // Card usages
-        Hand leftHand = null;
+        Hand leftHand = this.left.hand();
         Card leftPlayedCard = null;
-        if (actionPressedKeys.contains(F_DOWN)) {
-            if (leftEnergy.canAfford(this.left.hand().cards().get(0).cost())) {
-                leftPlayedCard = this.left.hand().cards().get(0);
-                leftHand = this.left.hand().play(0);
-                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(0).cost());
+
+        for (int i = 0; i < LEFT_CARD_KEYS.size(); i++) {
+            var cardKey = LEFT_CARD_KEYS.get(i);
+            if (actionPressedKeys.contains(cardKey)) {
+                if (leftEnergy.canAfford(this.left.hand().cards().get(i).cost())) {
+                    leftPlayedCard = this.left.hand().cards().get(i);
+                    leftHand = this.left.hand().play(i);
+                    leftEnergy = leftEnergy.spend(this.left.hand().cards().get(i).cost());
+                }
             }
         }
-
-        if (actionPressedKeys.contains(G_DOWN)) {
-            if (leftEnergy.canAfford(this.left.hand().cards().get(1).cost())) {
-                leftPlayedCard = this.left.hand().cards().get(1);
-                leftHand = this.left.hand().play(1);
-                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(1).cost());
-            }
-        }
-
-        if (actionPressedKeys.contains(H_DOWN)) {
-            if (leftEnergy.canAfford(this.left.hand().cards().get(2).cost())) {
-                leftPlayedCard = this.left.hand().cards().get(2);
-                leftHand = this.left.hand().play(2);
-                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(2).cost());
-            }
-        }
-
-        if (actionPressedKeys.contains(J_DOWN)) {
-            if (leftEnergy.canAfford(this.left.hand().cards().get(3).cost())) {
-                leftPlayedCard = this.left.hand().cards().get(3);
-                leftHand = this.left.hand().play(3);
-                leftEnergy = leftEnergy.spend(this.left.hand().cards().get(3).cost());
-            }
-        }
-
-        leftHand = leftHand == null ? this.left.hand() : leftHand;
 
         // Manage effects
         List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
