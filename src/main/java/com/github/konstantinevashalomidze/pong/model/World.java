@@ -18,46 +18,18 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
         // Paddle movement
-        boolean leftIsFrozen = hasEffect(this.left.effects(), Card.FREEZE);
-        Paddle left = null;
-        if (actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN) && !leftIsFrozen) {
-            left = this.left.paddle().moveBy(-PADDLE_SPEED * dt);
-        }
+        Paddle leftPaddle = movedPaddle(
+                this.left,
+                actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN),
+                actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN),
+                dt);
 
-        if (actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN) && !leftIsFrozen) {
-            left = this.left.paddle().moveBy(PADDLE_SPEED * dt);
-        }
 
-        if (left == null) {
-            left = this.left.paddle();
-        }
-
-        left = new Paddle(
-                applyEffects(left, this.left.effects()).clampTo(playfield).center(),
-                left.width(),
-                left.height()
-        );
-
-        boolean rightIsFrozen = hasEffect(this.right.effects(), Card.FREEZE);
-        Paddle right = null;
-        if (actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN) && !rightIsFrozen) {
-            right = this.right.paddle().moveBy(-PADDLE_SPEED * dt);
-        }
-
-        if (actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN) && !rightIsFrozen) {
-            right = this.right.paddle().moveBy(PADDLE_SPEED * dt);
-        }
-
-        if (right == null) {
-            right = this.right.paddle();
-        }
-
-        right = new Paddle(
-                applyEffects(right, this.right.effects()).clampTo(playfield).center(),
-                right.width(),
-                right.height()
-        );
-
+        Paddle rightPaddle = movedPaddle(
+                this.right,
+                actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN),
+                actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN),
+                dt);
 
         // Ball movement
         boolean leftShieldUsed = false;
@@ -107,9 +79,9 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                 rightSmashHit = true;
             }
             ball = new Ball(
-                ball.position(),
-                new Vec2((-1) * ball.velocity().x(), ball.velocity().y()),
-                ball.radius()
+                    ball.position(),
+                    new Vec2((-1) * ball.velocity().x(), ball.velocity().y()),
+                    ball.radius()
             );
         }
 
@@ -182,23 +154,46 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         }
 
         return new World(
-            playfield,
-            ball,
-            new Player(
-                left,
-                leftScore,
-                leftEnergy,
-                leftHand,
-                leftEffects
-            ),
-            new Player(
-                    right,
-                    rightScore,
-                    rightEnergy,
-                    this.right.hand(),
-                    rightEffects
-            )
+                playfield,
+                ball,
+                new Player(
+                        leftPaddle,
+                        leftScore,
+                        leftEnergy,
+                        leftHand,
+                        leftEffects
+                ),
+                new Player(
+                        rightPaddle,
+                        rightScore,
+                        rightEnergy,
+                        this.right.hand(),
+                        rightEffects
+                )
         );
+    }
+
+    private Paddle movedPaddle(Player player, boolean up, boolean down, double dt) {
+        boolean isFrozen = hasEffect(player.effects(), Card.FREEZE);
+        Paddle paddle = player.paddle();
+        if (isFrozen) {
+            return paddle;
+        }
+        if (up) {
+            paddle = player.paddle().moveBy(-PADDLE_SPEED * dt);
+        }
+
+        if (down) {
+            paddle = player.paddle().moveBy(PADDLE_SPEED * dt);
+        }
+
+        paddle = new Paddle(
+                applyEffects(paddle, player.effects()).clampTo(playfield).center(),
+                paddle.width(),
+                paddle.height()
+        );
+
+        return paddle;
     }
 
     private static boolean hasEffect(List<Effect> effects, Card card) {
