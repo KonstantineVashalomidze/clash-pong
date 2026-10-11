@@ -91,19 +91,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         Energy rightEnergy = this.right.energy().refill(dt);
 
         // Card usages
-        Hand leftHand = this.left.hand();
-        Card leftPlayedCard = null;
-
-        for (int i = 0; i < LEFT_CARD_KEYS.size(); i++) {
-            var cardKey = LEFT_CARD_KEYS.get(i);
-            if (actionPressedKeys.contains(cardKey)) {
-                if (leftEnergy.canAfford(this.left.hand().cards().get(i).cost())) {
-                    leftPlayedCard = this.left.hand().cards().get(i);
-                    leftHand = this.left.hand().play(i);
-                    leftEnergy = leftEnergy.spend(this.left.hand().cards().get(i).cost());
-                }
-            }
-        }
+        CardPlay leftPlay = playCard(leftEnergy, this.left.hand(), actionPressedKeys, LEFT_CARD_KEYS);
 
         // Manage effects
         List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
@@ -118,7 +106,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
             leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
         }
 
-        switch (leftPlayedCard) {
+        switch (leftPlay.played()) {
             case BARRICADE -> refresh(leftEffects, Card.BARRICADE, true);
             case BIG_PADDLE -> refresh(leftEffects, Card.BIG_PADDLE, true);
             case SHRINK -> refresh(rightEffects, Card.SHRINK, true);
@@ -138,8 +126,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                 new Player(
                         leftPaddle,
                         leftScore,
-                        leftEnergy,
-                        leftHand,
+                        leftPlay.energy(),
+                        leftPlay.hand(),
                         leftEffects
                 ),
                 new Player(
@@ -216,6 +204,21 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
             }
         }
         return paddle;
+    }
+
+    private CardPlay playCard(Energy energy, Hand hand, Set<String> actionPressedKeys, List<String> cardKeys) {
+        Card playedCard = null;
+        for (int i = 0; i < cardKeys.size(); i++) {
+            var cardKey = cardKeys.get(i);
+            if (actionPressedKeys.contains(cardKey)) {
+                if (energy.canAfford(hand.cards().get(i).cost())) {
+                    playedCard = hand.cards().get(i);
+                    hand = hand.play(i);
+                    energy = energy.spend(playedCard.cost());
+                }
+            }
+        }
+        return new CardPlay(hand, energy, playedCard);
     }
 
     private static void refresh(List<Effect> effects, Card card, boolean active) {
