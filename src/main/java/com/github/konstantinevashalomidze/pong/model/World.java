@@ -39,11 +39,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         if (ball.isOutLeft(playfield)) {
             if (hasEffect(this.left.effects(), Card.GOAL_SHIELD)) {
                 leftShieldUsed = true;
-                ball = new Ball(
-                        ball.position(),
-                        new Vec2((-1) * ball.velocity().x(), ball.velocity().y()),
-                        ball.radius()
-                );
+                ball = ball.reverseX();
             } else {
                 rightScore += 1;
                 ball = new Ball(
@@ -79,11 +75,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                     && this.right.effects().stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
                 rightSmashHit = true;
             }
-            ball = new Ball(
-                    ball.position(),
-                    new Vec2((-1) * ball.velocity().x(), ball.velocity().y()),
-                    ball.radius()
-            );
+            ball = ball.reverseX();
         }
 
         // Energy management

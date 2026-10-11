@@ -54,4 +54,11 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
                 <= Double.min(paddle.center().y() + paddle.height() / 2, position.y() + radius);
     }
 
+    public Ball reverseX() {
+        return new Ball(
+                position,
+                new Vec2((-1) * velocity.x(), velocity.y()),
+                radius
+        );
+    }
 }
