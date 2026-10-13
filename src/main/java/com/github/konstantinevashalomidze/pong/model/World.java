@@ -89,6 +89,11 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
             leftEffects.add(new Effect(SMASH, SMASH.duration(), true));
         }
 
+        if (rightSmashHit) {
+            rightEffects.removeIf(e -> e.card() == SMASH && !e.active());
+            rightEffects.add(new Effect(SMASH, SMASH.duration(), true));
+        }
+
         if (leftShieldUsed) {
             leftEffects.removeIf(e -> e.card() == GOAL_SHIELD);
         }
