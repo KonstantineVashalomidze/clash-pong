@@ -12,6 +12,7 @@ import java.util.Set;
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_COMPUTER;
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
+import static java.awt.RenderingHints.*;
 
 public class GamePanel extends JPanel {
     private static final List<String> LEFT_KEY_LABELS = List.of("F", "G", "H", "J");
@@ -170,6 +171,11 @@ public class GamePanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        // Make drawn strings smoother
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON);
+
         // Draw menu
         if (gameMode == null) {
             g.setColor(Color.WHITE);
@@ -285,16 +291,20 @@ public class GamePanel extends JPanel {
     private void drawHand(Graphics g, Hand hand, int startX, List<String> keyLabels) {
         g.setColor(Color.WHITE);
         var keyLabelFont = new Font(Font.SANS_SERIF, Font.BOLD, 12);
-        var defaultFont = g.getFont();
+        var defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 11);
         for (int i = 0; i < hand.cards().size(); i++) {
             var cardX = startX + i * 75;
             var keyLabel = keyLabels.get(i);
             g.setFont(keyLabelFont);
-            g.drawString(keyLabel, cardX + 56, 624);
+            g.drawString(keyLabel, cardX + 4, 624);
             g.setFont(defaultFont);
             g.drawRect(startX + i * 75, 610, 70, 44);
-            g.drawString(hand.cards().get(i).name().substring(0, 3), cardX + 4, 627);
-            g.drawString(Integer.toString(hand.cards().get(i).cost()), cardX + 4, 645);
+            var cardName = hand.cards().get(i).name().replace('_', ' ').split(" ");
+            g.drawString(cardName[0], cardX + 4, 638);
+            if (cardName.length > 1) {
+                g.drawString(cardName[1], cardX + 4, 650);
+            }
+            g.drawString(Integer.toString(hand.cards().get(i).cost()), cardX + 58, 625);
         }
     }
 
