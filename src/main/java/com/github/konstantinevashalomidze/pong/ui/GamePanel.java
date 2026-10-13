@@ -148,50 +148,18 @@ public class GamePanel extends JPanel {
                 .put(KeyStroke.getKeyStroke("pressed 2"), TWO_DOWN);
         getActionMap().put(TWO_DOWN, twoDown);
 
-        Action fDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actionPressedKeys.add(F_DOWN);
-            }
-        };
+        // For left cards
+        bindKey("pressed F", F_DOWN, () -> actionPressedKeys.add(F_DOWN));
+        bindKey("pressed G", G_DOWN, () -> actionPressedKeys.add(G_DOWN));
+        bindKey("pressed H", H_DOWN, () -> actionPressedKeys.add(H_DOWN));
+        bindKey("pressed J", J_DOWN, () -> actionPressedKeys.add(J_DOWN));
 
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed F"), F_DOWN);
-        getActionMap().put(F_DOWN, fDown);
+        // For right cards
+        bindKey("pressed K", K_DOWN, () -> actionPressedKeys.add(K_DOWN));
+        bindKey("pressed L", L_DOWN, () -> actionPressedKeys.add(L_DOWN));
+        bindKey("pressed SEMICOLON", SEMI_DOWN, () -> actionPressedKeys.add(SEMI_DOWN));
+        bindKey("pressed QUOTE", SINGLE_QUOTE_DOWN, () -> actionPressedKeys.add(SINGLE_QUOTE_DOWN));
 
-        Action gDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actionPressedKeys.add(G_DOWN);
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed G"), G_DOWN);
-        getActionMap().put(G_DOWN, gDown);
-
-
-        Action hDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actionPressedKeys.add(H_DOWN);
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed H"), H_DOWN);
-        getActionMap().put(H_DOWN, hDown);
-
-        Action jDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                actionPressedKeys.add(J_DOWN);
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed J"), J_DOWN);
-        getActionMap().put(J_DOWN, jDown);
 
     }
 
@@ -319,6 +287,15 @@ public class GamePanel extends JPanel {
         }
     }
 
+    private void bindKey(String keyStroke, String actionName, Runnable onTrigger) {
+        getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), actionName);
+        getActionMap().put(actionName, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onTrigger.run();
+            }
+        });
+    }
 
     public void setWorld(World world) {
         this.world = world;
