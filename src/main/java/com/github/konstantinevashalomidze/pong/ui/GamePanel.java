@@ -4,6 +4,7 @@ import com.github.konstantinevashalomidze.pong.model.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +14,9 @@ import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_CO
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
 
 public class GamePanel extends JPanel {
+    private static final List<String> LEFT_KEY_LABELS = List.of("F", "G", "H", "J");
+    private static final List<String> RIGHT_KEY_LABELS = List.of("K", "L", ";", "'");
+
     private final Set<String> actionKeys = new HashSet<>();
     private final Set<String> actionPressedKeys = new HashSet<>();
     private World world;
@@ -270,18 +274,24 @@ public class GamePanel extends JPanel {
 
 
         // Hand
-        drawHand(g, world.left().hand(), 20);
-        drawHand(g, world.right().hand(), 485);
+        drawHand(g, world.left().hand(), 20, LEFT_KEY_LABELS);
+        drawHand(g, world.right().hand(), 485, RIGHT_KEY_LABELS);
 
         // For linux
         Toolkit.getDefaultToolkit().sync();
 
     }
 
-    private void drawHand(Graphics g, Hand hand, int startX) {
+    private void drawHand(Graphics g, Hand hand, int startX, List<String> keyLabels) {
         g.setColor(Color.WHITE);
+        var keyLabelFont = new Font(Font.SANS_SERIF, Font.BOLD, 12);
+        var defaultFont = g.getFont();
         for (int i = 0; i < hand.cards().size(); i++) {
-            int cardX = startX + i * 75;
+            var cardX = startX + i * 75;
+            var keyLabel = keyLabels.get(i);
+            g.setFont(keyLabelFont);
+            g.drawString(keyLabel, cardX + 56, 624);
+            g.setFont(defaultFont);
             g.drawRect(startX + i * 75, 610, 70, 44);
             g.drawString(hand.cards().get(i).name().substring(0, 3), cardX + 4, 627);
             g.drawString(Integer.toString(hand.cards().get(i).cost()), cardX + 4, 645);
