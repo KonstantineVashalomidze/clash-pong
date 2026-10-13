@@ -16,6 +16,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
     private static final double SMASH_TIME_SCALE = 1.6;
     private static final double SLOW_FIELD_TIME_SCALE = 0.5;
     private static final List<String> LEFT_CARD_KEYS = List.of(F_DOWN, G_DOWN, H_DOWN, J_DOWN);
+    private static final List<String> RIGHT_CARD_KEYS = List.of(K_DOWN, L_DOWN, SEMI_DOWN, SINGLE_QUOTE_DOWN);
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
@@ -77,6 +78,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
 
         // Card usages
         CardPlay leftPlay = playCard(leftEnergy, this.left.hand(), actionPressedKeys, LEFT_CARD_KEYS);
+        CardPlay rightPlay = playCard(rightEnergy, this.right.hand(), actionPressedKeys, RIGHT_CARD_KEYS);
 
         // Manage effects
         List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
@@ -106,8 +108,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                 new Player(
                         rightPaddle,
                         rightScore,
-                        rightEnergy,
-                        this.right.hand(),
+                        rightPlay.energy(),
+                        rightPlay.hand(),
                         rightEffects
                 )
         );
