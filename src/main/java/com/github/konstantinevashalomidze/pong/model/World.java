@@ -34,9 +34,12 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                 actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN),
                 dt);
 
+
+
         // Ball movement
-        boolean leftShieldUsed = false;
         Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
+
+        boolean leftShieldUsed = false;
         int rightScore = this.right.score();
         if (ball.isOutLeft(playfield)) {
             if (hasEffect(this.left.effects(), GOAL_SHIELD)) {
@@ -49,10 +52,16 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
 
         }
 
+        boolean rightShieldUsed = false;
         int leftScore = this.left.score();
         if (ball.isOutRight(playfield)) {
-            leftScore += 1;
-            ball = serve(ball, -SERVE_SPEED_X);
+            if (hasEffect(this.right.effects(), GOAL_SHIELD)) {
+                rightShieldUsed = true;
+                ball = ball.reverseX();
+            } else {
+                leftScore += 1;
+                ball = serve(ball, -SERVE_SPEED_X);
+            }
         }
 
         // Bounce ball off the paddles
@@ -96,6 +105,10 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
 
         if (leftShieldUsed) {
             leftEffects.removeIf(e -> e.card() == GOAL_SHIELD);
+        }
+
+        if (rightShieldUsed) {
+            rightEffects.removeIf(e -> e.card() == GOAL_SHIELD);
         }
 
         applyPlayedCard(leftPlay.played(), leftEffects, rightEffects);
