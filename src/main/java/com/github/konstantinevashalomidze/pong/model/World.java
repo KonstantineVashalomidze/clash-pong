@@ -94,6 +94,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         }
 
         applyPlayedCard(leftPlay.played(), leftEffects, rightEffects);
+        applyPlayedCard(rightPlay.played(), rightEffects, leftEffects);
 
         return new World(
                 playfield,
