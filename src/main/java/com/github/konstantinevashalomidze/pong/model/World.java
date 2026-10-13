@@ -61,11 +61,11 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         boolean wasRightHit = ball.overlaps(effectiveRight()) && ball.velocity().x() > 0;
         if (wasLeftHit || wasRightHit) {
             if (wasLeftHit
-                    && this.left.effects().stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
+                    && this.left.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
                 leftSmashHit = true;
             }
             if (wasRightHit
-                    && this.right.effects().stream().anyMatch(e -> e.card() == Card.SMASH && !e.active())) {
+                    && this.right.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
                 rightSmashHit = true;
             }
             ball = ball.reverseX();
@@ -83,8 +83,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         List<Effect> rightEffects = this.right().effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
 
         if (leftSmashHit) {
-            leftEffects.removeIf(e -> e.card() == Card.SMASH && !e.active());
-            leftEffects.add(new Effect(Card.SMASH, Card.SMASH.duration(), true));
+            leftEffects.removeIf(e -> e.card() == SMASH && !e.active());
+            leftEffects.add(new Effect(SMASH, SMASH.duration(), true));
         }
 
         if (leftShieldUsed) {
@@ -138,7 +138,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
     }
 
     private Paddle movedPaddle(Player player, boolean up, boolean down, double dt) {
-        boolean isFrozen = hasEffect(player.effects(), Card.FREEZE);
+        boolean isFrozen = hasEffect(player.effects(), FREEZE);
         Paddle paddle = player.paddle();
         if (isFrozen) {
             return paddle;
@@ -225,8 +225,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
 
     private double ballTimeScale() {
         double scale = 1;
-        if (this.left.effects().stream().anyMatch(e -> e.card() == Card.SMASH && e.active())
-                || this.right.effects().stream().anyMatch(e -> e.card() == Card.SMASH && e.active())) {
+        if (this.left.effects().stream().anyMatch(e -> e.card() == SMASH && e.active())
+                || this.right.effects().stream().anyMatch(e -> e.card() == SMASH && e.active())) {
             scale *= SMASH_TIME_SCALE;
         }
         if (hasEffect(this.left.effects(), SLOW_FIELD)
