@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
+import static com.github.konstantinevashalomidze.pong.model.Card.*;
 
 public record World(Playfield playfield, Ball ball, Player left, Player right) {
     private static final int PADDLE_SPEED = 300;
@@ -37,16 +38,12 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
         int rightScore = this.right.score();
         if (ball.isOutLeft(playfield)) {
-            if (hasEffect(this.left.effects(), Card.GOAL_SHIELD)) {
+            if (hasEffect(this.left.effects(), GOAL_SHIELD)) {
                 leftShieldUsed = true;
                 ball = ball.reverseX();
             } else {
                 rightScore += 1;
-                ball = new Ball(
-                        new Vec2(playfield.width() / 2, playfield.height() / 2),
-                        new Vec2(SERVE_SPEED_X, SERVE_SPEED_Y),
-                        ball().radius()
-                );
+                ball = serve(ball, SERVE_SPEED_X);
             }
 
         }
@@ -54,11 +51,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         int leftScore = this.left.score();
         if (ball.isOutRight(playfield)) {
             leftScore += 1;
-            ball = new Ball(
-                    new Vec2(playfield.width() / 2, playfield.height() / 2),
-                    new Vec2(-SERVE_SPEED_X, SERVE_SPEED_Y),
-                    ball().radius()
-            );
+            ball = serve(ball, -SERVE_SPEED_X);
         }
 
         // Bounce ball off the paddles
@@ -95,7 +88,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
         }
 
         if (leftShieldUsed) {
-            leftEffects.removeIf(e -> e.card() == Card.GOAL_SHIELD);
+            leftEffects.removeIf(e -> e.card() == GOAL_SHIELD);
         }
 
         applyPlayedCard(leftPlay.played(), leftEffects, rightEffects);
@@ -122,18 +115,26 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
 
     private void applyPlayedCard(Card played, List<Effect> ownEffects, List<Effect> opponentEffects) {
         switch (played) {
-            case BARRICADE -> refresh(ownEffects, Card.BARRICADE, true);
-            case BIG_PADDLE -> refresh(ownEffects, Card.BIG_PADDLE, true);
-            case SHRINK -> refresh(opponentEffects, Card.SHRINK, true);
-            case FREEZE -> refresh(opponentEffects, Card.FREEZE, true);
-            case SMASH -> refresh(ownEffects, Card.SMASH, false);
-            case SLOW_FIELD -> refresh(ownEffects, Card.SLOW_FIELD, true);
-            case STRAFE -> refresh(ownEffects, Card.STRAFE, true);
-            case GOAL_SHIELD -> refresh(ownEffects, Card.GOAL_SHIELD, true);
+            case BARRICADE -> refresh(ownEffects, BARRICADE, true);
+            case BIG_PADDLE -> refresh(ownEffects, BIG_PADDLE, true);
+            case SHRINK -> refresh(opponentEffects, SHRINK, true);
+            case FREEZE -> refresh(opponentEffects, FREEZE, true);
+            case SMASH -> refresh(ownEffects, SMASH, false);
+            case SLOW_FIELD -> refresh(ownEffects, SLOW_FIELD, true);
+            case STRAFE -> refresh(ownEffects, STRAFE, true);
+            case GOAL_SHIELD -> refresh(ownEffects, GOAL_SHIELD, true);
             case null, default -> {
 
             }
         }
+    }
+
+    private Ball serve(Ball ball, double velocityX) {
+        return new Ball(
+                new Vec2(playfield.width() / 2, playfield.height() / 2),
+                new Vec2(velocityX, SERVE_SPEED_Y),
+                ball.radius()
+        );
     }
 
     private Paddle movedPaddle(Player player, boolean up, boolean down, double dt) {
@@ -228,8 +229,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                 || this.right.effects().stream().anyMatch(e -> e.card() == Card.SMASH && e.active())) {
             scale *= SMASH_TIME_SCALE;
         }
-        if (hasEffect(this.left.effects(), Card.SLOW_FIELD)
-                || hasEffect(this.right.effects(), Card.SLOW_FIELD)) {
+        if (hasEffect(this.left.effects(), SLOW_FIELD)
+                || hasEffect(this.right.effects(), SLOW_FIELD)) {
             scale *= SLOW_FIELD_TIME_SCALE;
         }
         return scale;
