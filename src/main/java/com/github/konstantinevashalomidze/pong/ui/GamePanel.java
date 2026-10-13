@@ -259,6 +259,7 @@ public class GamePanel extends JPanel {
         g.setColor(Color.WHITE);
         Energy rightEnergy = world.right().energy();
         g.fillRect(580, 660, (int) (rightEnergy.amount() / 10 * 200), 20);
+        g.drawString(String.valueOf((int) Math.floor(rightEnergy.amount())), 555, 660 + 20);
         for (int i = 1; i <= 9; i++) {
             g.setColor(Color.BLACK);
             g.drawLine(580 + i * 20, 660, 580 + i * 20, 660 + 20);
