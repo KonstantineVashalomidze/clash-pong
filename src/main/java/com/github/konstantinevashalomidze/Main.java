@@ -14,6 +14,8 @@ import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_CO
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
 
 public class Main {
+    static long lastNanos = System.nanoTime();
+
     static void main() {
         EventQueue.invokeLater(() -> {
             int width = 800, height = 720;
@@ -44,15 +46,19 @@ public class Main {
             gamePanel.setPreferredSize(new Dimension(width, height));
 
             Timer loop = new Timer(16, (e) -> {
+                long now = System.nanoTime();
+                double dt = (now - lastNanos) / 1_000_000_000.0;
+                lastNanos = now;
+
                 if (gamePanel.getGameMode() == HUMAN_VS_HUMAN) {
-                    gamePanel.setWorld(gamePanel.getWorld().step(0.016, gamePanel.getActionKeys(), gamePanel.getActionPressedKeys()));
+                    gamePanel.setWorld(gamePanel.getWorld().step(dt, gamePanel.getActionKeys(), gamePanel.getActionPressedKeys()));
                 } else if (gamePanel.getGameMode() == HUMAN_VS_COMPUTER) {
                     Set<String> copiedActionKeys = new HashSet<>(gamePanel.getActionKeys());
                     String computerAction = ComputerPlayer.makeAction(gamePanel.getWorld());
                     if (computerAction != null) {
                         copiedActionKeys.add(computerAction);
                     }
-                    gamePanel.setWorld(gamePanel.getWorld().step(0.016, copiedActionKeys, gamePanel.getActionPressedKeys()));
+                    gamePanel.setWorld(gamePanel.getWorld().step(dt, copiedActionKeys, gamePanel.getActionPressedKeys()));
                 }
                 gamePanel.getActionPressedKeys().clear();
             });
