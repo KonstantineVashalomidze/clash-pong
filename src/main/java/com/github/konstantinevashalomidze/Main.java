@@ -75,7 +75,8 @@ public class Main {
                         new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
                                 List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
                         List.of()
-                )
+                ),
+                List.of()
         );
     }
 }

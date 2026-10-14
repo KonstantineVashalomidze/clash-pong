@@ -10,7 +10,7 @@ import static com.github.konstantinevashalomidze.pong.model.Card.*;
 import static com.github.konstantinevashalomidze.pong.model.Side.LEFT;
 import static com.github.konstantinevashalomidze.pong.model.Side.RIGHT;
 
-public record World(Playfield playfield, Ball ball, Player left, Player right) {
+public record World(Playfield playfield, Ball ball, Player left, Player right, List<Brick> bricks) {
     private static final int PADDLE_SPEED = 300;
     private static final int SERVE_SPEED_X = 200;
     private static final int SERVE_SPEED_Y = 120;
@@ -41,8 +41,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                 actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN),
                 actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN),
                 dt);
-
-
 
         // Ball movement
         Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
@@ -138,7 +136,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
                         rightPlay.energy(),
                         rightPlay.hand(),
                         rightEffects
-                )
+                ),
+                bricks
         );
     }
 
