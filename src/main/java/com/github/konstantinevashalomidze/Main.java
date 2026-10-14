@@ -22,26 +22,7 @@ public class Main {
             int width = 800, height = 720;
             JFrame frame = new JFrame("Pong");
 
-            World world = new World(
-                    new Playfield(800, 600),
-                    new Ball(new Vec2(400, 300), new Vec2(200, 120), 8),
-                    new Player(
-                            new Paddle(new Vec2(30, 300), 10, 80),
-                            0,
-                            new Energy(5),
-                            new Hand(List.of(BARRICADE, BIG_PADDLE, SHRINK, FREEZE),
-                                    List.of(SMASH, SLOW_FIELD, STRAFE, GOAL_SHIELD)),
-                            List.of()
-                    ),
-                    new Player(
-                            new Paddle(new Vec2(770, 300), 10, 80),
-                            0,
-                            new Energy(5),
-                            new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
-                                    List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
-                            List.of()
-                    )
-            );
+            World world = createWorld();
 
             GamePanel gamePanel = new GamePanel(world);
             gamePanel.setPreferredSize(new Dimension(width, height));
@@ -75,5 +56,28 @@ public class Main {
             loop.start();
 
         });
+    }
+
+    private static World createWorld() {
+        return new World(
+                new Playfield(800, 600),
+                new Ball(new Vec2(400, 300), new Vec2(200, 120), 8),
+                new Player(
+                        new Paddle(new Vec2(30, 300), 10, 80),
+                        0,
+                        new Energy(5),
+                        new Hand(List.of(BARRICADE, BIG_PADDLE, SHRINK, FREEZE),
+                                List.of(SMASH, SLOW_FIELD, STRAFE, GOAL_SHIELD)),
+                        List.of()
+                ),
+                new Player(
+                        new Paddle(new Vec2(770, 300), 10, 80),
+                        0,
+                        new Energy(5),
+                        new Hand(List.of(GOAL_SHIELD, STRAFE, SLOW_FIELD, SMASH),
+                                List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
+                        List.of()
+                )
+        );
     }
 }
