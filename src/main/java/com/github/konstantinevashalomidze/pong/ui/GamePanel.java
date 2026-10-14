@@ -306,6 +306,8 @@ public class GamePanel extends JPanel {
             Side winner =  world.winner().get();
             String winnerLabel = winner + " PLAYER WINS";
             g.drawString(winnerLabel, (getWidth() - g.getFontMetrics().stringWidth(winnerLabel)) / 2, 300);
+            g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+            g.drawString("Press R to play again", (getWidth() - g.getFontMetrics().stringWidth(winnerLabel)) / 2, 350);
         }
 
         // For linux
