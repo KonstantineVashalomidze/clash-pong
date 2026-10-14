@@ -54,6 +54,13 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
                 <= Double.min(paddle.center().y() + paddle.height() / 2, position.y() + radius);
     }
 
+    public boolean overlaps(Brick brick) {
+        return Double.max(brick.center().x() - brick.width() / 2, position.x() - radius)
+                <= Double.min(brick.center().x() + brick.width() / 2, position.x() + radius)
+                && Double.max(brick.center().y() - brick.height() / 2, position.y() - radius)
+                <= Double.min(brick.center().y() + brick.height() / 2, position.y() + radius);
+    }
+
     public Ball reverseX() {
         return new Ball(
                 position,

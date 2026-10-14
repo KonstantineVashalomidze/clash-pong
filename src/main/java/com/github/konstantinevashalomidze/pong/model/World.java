@@ -134,6 +134,10 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 .filter(b -> !b.isExpired())
                 .collect(Collectors.toList());
 
+        boolean overlappedWithBrick = newBricks.removeIf(ball::overlaps);
+        if (overlappedWithBrick) {
+            ball = ball.reverseX();
+        }
 
         if (leftPlay.played() == BARRICADE) {
             newBricks = spawnBricks(newBricks);
