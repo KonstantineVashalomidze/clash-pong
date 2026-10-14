@@ -1,11 +1,14 @@
 package com.github.konstantinevashalomidze.pong.model;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 import static com.github.konstantinevashalomidze.pong.model.Card.*;
+import static com.github.konstantinevashalomidze.pong.model.Side.LEFT;
+import static com.github.konstantinevashalomidze.pong.model.Side.RIGHT;
 
 public record World(Playfield playfield, Ball ball, Player left, Player right) {
     private static final int PADDLE_SPEED = 300;
@@ -17,6 +20,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
     private static final double SLOW_FIELD_TIME_SCALE = 0.5;
     private static final List<String> LEFT_CARD_KEYS = List.of(F_DOWN, G_DOWN, H_DOWN, J_DOWN);
     private static final List<String> RIGHT_CARD_KEYS = List.of(K_DOWN, L_DOWN, SEMI_DOWN, SINGLE_QUOTE_DOWN);
+    private static final int WIN_SCORE = 7;
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
@@ -255,6 +259,16 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
             scale *= SLOW_FIELD_TIME_SCALE;
         }
         return scale;
+    }
+
+    public Optional<Side> winner() {
+        if (left.score() >= WIN_SCORE) {
+            return Optional.of(LEFT);
+        } else if (right.score() >= WIN_SCORE) {
+            return Optional.of(RIGHT);
+        } else {
+            return Optional.empty();
+        }
     }
 
 }
