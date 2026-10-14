@@ -299,7 +299,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                             randomInRange(BRICK_SPAWNING_AREA_Y1, BRICK_SPAWNING_AREA_Y2)
                             ),
                     BRICK_WIDTH,
-                    BRICK_HEIGHT
+                    BRICK_HEIGHT,
+                    BARRICADE.duration()
             ));
         }
         return newBricks;
