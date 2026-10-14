@@ -1,5 +1,7 @@
 package com.github.konstantinevashalomidze.pong.model;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +23,11 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final List<String> LEFT_CARD_KEYS = List.of(F_DOWN, G_DOWN, H_DOWN, J_DOWN);
     private static final List<String> RIGHT_CARD_KEYS = List.of(K_DOWN, L_DOWN, SEMI_DOWN, SINGLE_QUOTE_DOWN);
     private static final int WIN_SCORE = 7;
+    private static final int BARRICADE_BRICK_COUNT = 3;
+    private static final int BRICK_WIDTH = 16;
+    private static final int BRICK_HEIGHT = 40;
+    private static final int BRICK_SPAWNING_AREA_X1 = 350, BRICK_SPAWNING_AREA_X2 = 450;
+    private static final int BRICK_SPAWNING_AREA_Y1 = 100, BRICK_SPAWNING_AREA_Y2 = 400;
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
@@ -120,6 +127,15 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         applyPlayedCard(leftPlay.played(), leftEffects, rightEffects);
         applyPlayedCard(rightPlay.played(), rightEffects, leftEffects);
 
+        List<Brick> newBricks = bricks;
+        if (leftPlay.played() == BARRICADE) {
+            newBricks = spawnBricks(newBricks);
+        }
+
+        if (rightPlay.played() == BARRICADE) {
+            newBricks = spawnBricks(newBricks);
+        }
+
         return new World(
                 playfield,
                 ball,
@@ -137,7 +153,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                         rightPlay.hand(),
                         rightEffects
                 ),
-                bricks
+                newBricks
         );
     }
 
@@ -272,6 +288,25 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         } else {
             return Optional.empty();
         }
+    }
+
+    public static List<Brick> spawnBricks(List<Brick> bricks) {
+        List<Brick> newBricks = new ArrayList<>(bricks);
+        for (int i = 0; i < BARRICADE_BRICK_COUNT; i++) {
+            newBricks.add(new Brick(
+                    new Vec2(
+                            randomInRange(BRICK_SPAWNING_AREA_X1, BRICK_SPAWNING_AREA_X2),
+                            randomInRange(BRICK_SPAWNING_AREA_Y1, BRICK_SPAWNING_AREA_Y2)
+                            ),
+                    BRICK_WIDTH,
+                    BRICK_HEIGHT
+            ));
+        }
+        return newBricks;
+    }
+
+    private static double randomInRange(double lower, double upper) {
+        return lower + (upper - lower) * Math.random();
     }
 
 }

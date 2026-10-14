@@ -76,7 +76,7 @@ public class Main {
                                 List.of(FREEZE, SHRINK, BIG_PADDLE, BARRICADE)),
                         List.of()
                 ),
-                List.of(new Brick(new Vec2(400, 300), 5, 30))
+                List.of()
         );
     }
 }
