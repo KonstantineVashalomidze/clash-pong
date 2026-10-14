@@ -297,6 +297,10 @@ public class GamePanel extends JPanel {
         drawHand(g, world.left().hand(), 20, LEFT_KEY_LABELS, world.left().energy());
         drawHand(g, world.right().hand(), 485, RIGHT_KEY_LABELS, world.right().energy());
 
+        // Draw effect hints
+        drawEffects(g, world.left().effects(), 20);
+        drawEffects(g, world.right().effects(), 485);
+
         // Show winner
         if (world.winner().isPresent()) {
             g.setColor(new Color(0, 0, 0, 170));
@@ -347,6 +351,18 @@ public class GamePanel extends JPanel {
                 onTrigger.run();
             }
         });
+    }
+
+    private void drawEffects(Graphics g, List<Effect> effects, int startX) {
+        for (var effect : effects) {
+            StringBuilder sb = new StringBuilder(effect.card().name().replace('_', ' '))
+                    .append(" ")
+                    .append(String.format("%.1fs", effect.remainingSeconds()));
+            g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+            String effectLabel = sb.toString();
+            g.drawString(effectLabel, startX, 705);
+            startX += g.getFontMetrics().stringWidth(effectLabel) + 4;
+        }
     }
 
     public void setWorld(World world) {
