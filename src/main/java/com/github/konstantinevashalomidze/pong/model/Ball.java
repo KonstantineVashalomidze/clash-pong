@@ -39,6 +39,19 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
         return this;
     }
 
+    public Ball bounceOffBrick(Brick brick) {
+        // Check from which side ball collided
+        double xRange = Double.min(brick.center().x() + brick.width() / 2, position.x() + radius) - Double.max(brick.center().x() - brick.width() / 2, position.x() - radius);
+        double yRange = Double.min(brick.center().y() + brick.height() / 2, position.y() + radius) - Double.max(brick.center().y() - brick.height() / 2, position.y() - radius);
+
+        // X side collided
+        if (xRange <= yRange) {
+            return this.reverseX();
+        } else { // Y side collided
+            return this.reverseY();
+        }
+    }
+
     public boolean isOutRight(Playfield playfield) {
         return position.x() - radius > playfield.width();
     }
