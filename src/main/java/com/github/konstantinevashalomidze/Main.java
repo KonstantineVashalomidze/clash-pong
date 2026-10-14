@@ -14,7 +14,8 @@ import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_CO
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
 
 public class Main {
-    static long lastNanos = System.nanoTime();
+    private static long lastNanos;
+    private static final double MAX_DT = 0.05;
 
     static void main() {
         EventQueue.invokeLater(() -> {
@@ -48,6 +49,7 @@ public class Main {
             Timer loop = new Timer(16, (e) -> {
                 long now = System.nanoTime();
                 double dt = (now - lastNanos) / 1_000_000_000.0;
+                dt = Double.min(dt, MAX_DT);
                 lastNanos = now;
 
                 if (gamePanel.getGameMode() == HUMAN_VS_HUMAN) {
@@ -69,6 +71,7 @@ public class Main {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
 
+            lastNanos = System.nanoTime();
             loop.start();
 
         });
