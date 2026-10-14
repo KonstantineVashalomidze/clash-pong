@@ -24,6 +24,10 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
+        if (winner().isPresent()) {
+            return this;
+        }
+
         // Paddle movement
         Paddle leftPaddle = movedPaddle(
                 this.left,
