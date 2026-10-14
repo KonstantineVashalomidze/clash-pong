@@ -280,19 +280,22 @@ public class GamePanel extends JPanel {
 
 
         // Hand
-        drawHand(g, world.left().hand(), 20, LEFT_KEY_LABELS);
-        drawHand(g, world.right().hand(), 485, RIGHT_KEY_LABELS);
+        drawHand(g, world.left().hand(), 20, LEFT_KEY_LABELS, world.left().energy());
+        drawHand(g, world.right().hand(), 485, RIGHT_KEY_LABELS, world.right().energy());
 
         // For linux
         Toolkit.getDefaultToolkit().sync();
 
     }
 
-    private void drawHand(Graphics g, Hand hand, int startX, List<String> keyLabels) {
+    private void drawHand(Graphics g, Hand hand, int startX, List<String> keyLabels, Energy energy) {
         g.setColor(Color.WHITE);
         var keyLabelFont = new Font(Font.SANS_SERIF, Font.BOLD, 12);
         var defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 11);
         for (int i = 0; i < hand.cards().size(); i++) {
+            if (!energy.canAfford(hand.cards().get(i).cost())) {
+                g.setColor(Color.DARK_GRAY);
+            }
             var cardX = startX + i * 75;
             var keyLabel = keyLabels.get(i);
             g.setFont(keyLabelFont);
@@ -305,6 +308,7 @@ public class GamePanel extends JPanel {
                 g.drawString(cardName[1], cardX + 4, 650);
             }
             g.drawString(Integer.toString(hand.cards().get(i).cost()), cardX + 58, 625);
+            g.setColor(Color.WHITE);
         }
     }
 
