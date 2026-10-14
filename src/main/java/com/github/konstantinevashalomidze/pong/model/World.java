@@ -128,6 +128,13 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         applyPlayedCard(rightPlay.played(), rightEffects, leftEffects);
 
         List<Brick> newBricks = bricks;
+
+        newBricks = newBricks.stream()
+                .map(b -> b.tick(dt))
+                .filter(b -> !b.isExpired())
+                .collect(Collectors.toList());
+
+
         if (leftPlay.played() == BARRICADE) {
             newBricks = spawnBricks(newBricks);
         }
@@ -135,6 +142,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         if (rightPlay.played() == BARRICADE) {
             newBricks = spawnBricks(newBricks);
         }
+
 
         return new World(
                 playfield,
