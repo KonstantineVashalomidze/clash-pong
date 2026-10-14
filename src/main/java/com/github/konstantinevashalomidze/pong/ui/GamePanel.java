@@ -134,7 +134,9 @@ public class GamePanel extends JPanel {
         Action oneDown = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gameMode = HUMAN_VS_HUMAN;
+                if (gameMode == null) {
+                    gameMode = HUMAN_VS_HUMAN;
+                }
             }
         };
 
@@ -145,7 +147,9 @@ public class GamePanel extends JPanel {
         Action twoDown =  new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                gameMode = HUMAN_VS_COMPUTER;
+                if (gameMode == null) {
+                    gameMode = HUMAN_VS_COMPUTER;
+                }
             }
         };
 
