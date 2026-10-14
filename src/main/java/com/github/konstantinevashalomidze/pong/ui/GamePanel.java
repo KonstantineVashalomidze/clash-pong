@@ -287,6 +287,17 @@ public class GamePanel extends JPanel {
         drawHand(g, world.left().hand(), 20, LEFT_KEY_LABELS, world.left().energy());
         drawHand(g, world.right().hand(), 485, RIGHT_KEY_LABELS, world.right().energy());
 
+        // Show winner
+        if (world.winner().isPresent()) {
+            g.setColor(new Color(0, 0, 0, 170));
+            g.fillRect(0, 0, getWidth(), getHeight());
+            g.setColor(Color.WHITE);
+            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
+            Side winner =  world.winner().get();
+            String winnerLabel = winner + " PLAYER WINS";
+            g.drawString(winnerLabel, (getWidth() - g.getFontMetrics().stringWidth(winnerLabel)) / 2, 300);
+        }
+
         // For linux
         Toolkit.getDefaultToolkit().sync();
 
