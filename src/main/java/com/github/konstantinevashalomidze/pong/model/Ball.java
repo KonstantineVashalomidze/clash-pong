@@ -68,4 +68,13 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
                 radius
         );
     }
+
+    public Ball reverseY() {
+        return new Ball(
+            position,
+            new Vec2(velocity.x(), (-1) * velocity.y()),
+            radius
+        );
+    }
+
 }
