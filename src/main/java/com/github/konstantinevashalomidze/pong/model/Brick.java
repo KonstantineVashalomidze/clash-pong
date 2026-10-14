@@ -18,6 +18,12 @@ public record Brick(
         ) throw new BrickArgumentException("Invalid brick argument");
     }
 
+    public double topLeftX() {
+        return center.x() - width / 2;
+    }
 
+    public double topLeftY() {
+        return center.y() - height / 2;
+    }
 
 }

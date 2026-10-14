@@ -219,6 +219,10 @@ public class GamePanel extends JPanel {
                 2 * ballRadius
         );
 
+        // Bricks
+        drawBricks(g, world.bricks());
+
+
         // Left paddle
         Paddle leftPaddle = world.effectiveLeft();
         int leftPaddleCenterX = (int) leftPaddle.center().x();
@@ -317,6 +321,13 @@ public class GamePanel extends JPanel {
         // For linux
         Toolkit.getDefaultToolkit().sync();
 
+    }
+
+    private void drawBricks(Graphics g, List<Brick> bricks) {
+        g.setColor(Color.WHITE);
+        for (var brick : bricks) {
+            g.fillRect((int) brick.topLeftX(), (int) brick.topLeftY(), (int) brick.width(), (int) brick.height());
+        }
     }
 
     private void drawHand(Graphics g, Hand hand, int startX, List<String> keyLabels, Energy energy) {
