@@ -8,6 +8,7 @@ import java.util.List;
 import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
 import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_COMPUTER;
@@ -22,8 +23,10 @@ public class GamePanel extends JPanel {
     private final Set<String> actionPressedKeys = new HashSet<>();
     private World world;
     private GameMode gameMode;
-    public GamePanel(World world) {
-        this.world = world;
+    private Supplier<World> worldFactory;
+    public GamePanel(Supplier<World> worldFactory) {
+        this.worldFactory = worldFactory;
+        this.world = worldFactory.get();
 
         setBackground(Color.BLACK);
 
@@ -169,6 +172,13 @@ public class GamePanel extends JPanel {
         bindKey("pressed SEMICOLON", SEMI_DOWN, () -> actionPressedKeys.add(SEMI_DOWN));
         bindKey("pressed QUOTE", SINGLE_QUOTE_DOWN, () -> actionPressedKeys.add(SINGLE_QUOTE_DOWN));
 
+        // For play again
+        bindKey("pressed R", R_DOWN, () -> {
+            if (world.winner().isPresent()) {
+                actionKeys.clear();
+                setWorld(worldFactory.get());
+            }
+        });
 
     }
 

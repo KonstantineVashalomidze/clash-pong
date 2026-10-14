@@ -20,7 +20,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right) {
     private static final double SLOW_FIELD_TIME_SCALE = 0.5;
     private static final List<String> LEFT_CARD_KEYS = List.of(F_DOWN, G_DOWN, H_DOWN, J_DOWN);
     private static final List<String> RIGHT_CARD_KEYS = List.of(K_DOWN, L_DOWN, SEMI_DOWN, SINGLE_QUOTE_DOWN);
-    private static final int WIN_SCORE = 1;
+    private static final int WIN_SCORE = 7;
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 

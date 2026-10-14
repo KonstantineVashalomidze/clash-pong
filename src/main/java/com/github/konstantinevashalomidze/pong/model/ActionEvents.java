@@ -19,4 +19,5 @@ public class ActionEvents {
     public static final String L_DOWN = "lDown";
     public static final String SEMI_DOWN = "semiDown";
     public static final String SINGLE_QUOTE_DOWN = "singleQuoteDown";
+    public static final String R_DOWN = "rDown";
 }

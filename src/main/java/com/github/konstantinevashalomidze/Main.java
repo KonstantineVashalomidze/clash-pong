@@ -22,9 +22,7 @@ public class Main {
             int width = 800, height = 720;
             JFrame frame = new JFrame("Pong");
 
-            World world = createWorld();
-
-            GamePanel gamePanel = new GamePanel(world);
+            GamePanel gamePanel = new GamePanel(Main::createWorld);
             gamePanel.setPreferredSize(new Dimension(width, height));
 
             Timer loop = new Timer(16, (e) -> {
