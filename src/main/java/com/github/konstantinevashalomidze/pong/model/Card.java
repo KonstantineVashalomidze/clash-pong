@@ -1,7 +1,7 @@
 package com.github.konstantinevashalomidze.pong.model;
 
 public enum Card {
-    BARRICADE(3, 1200),
+    BARRICADE(3, 12),
     BIG_PADDLE(3, 6),
     SHRINK(3, 6),
     FREEZE(4, 1),
