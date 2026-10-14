@@ -8,10 +8,6 @@ public record Brick(
 ) {
 
     public Brick {
-        if (remainingSeconds < 0) {
-            throw new BrickArgumentException("Invalid remaining seconds");
-        }
-
         if (width <= 0 || height <= 0) {
             throw new BrickArgumentException("Invalid brick width or height");
         }
@@ -31,6 +27,14 @@ public record Brick(
 
     public double topLeftY() {
         return center.y() - height / 2;
+    }
+
+    public Brick tick(double dt) {
+        return new Brick(center, width, height, remainingSeconds - dt);
+    }
+
+    public boolean isExpired() {
+        return remainingSeconds <= 0;
     }
 
 }
