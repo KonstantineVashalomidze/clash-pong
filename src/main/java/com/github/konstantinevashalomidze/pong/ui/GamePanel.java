@@ -180,6 +180,46 @@ public class GamePanel extends JPanel {
             }
         });
 
+        // Strafe
+        bindKey("pressed A", A_DOWN, () -> {
+
+        });
+
+        bindKey("released A",  A_UP, () -> {
+
+        });
+
+        bindKey("pressed D", D_DOWN, () -> {
+
+        });
+
+        bindKey("released D",  D_UP, () -> {
+
+        });
+
+        bindKey("pressed LEFT", LEFT_ARROW_DOWN, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+
+            }
+        });
+
+        bindKey("released LEFT",  LEFT_ARROW_UP, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+
+            }
+        });
+
+        bindKey("pressed RIGHT", RIGHT_ARROW_DOWN, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+
+            }
+        });
+
+        bindKey("released RIGHT",  RIGHT_ARROW_UP, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                
+            }
+        });
     }
 
     @Override

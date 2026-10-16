@@ -20,4 +20,12 @@ public class ActionEvents {
     public static final String SEMI_DOWN = "semiDown";
     public static final String SINGLE_QUOTE_DOWN = "singleQuoteDown";
     public static final String R_DOWN = "rDown";
+    public static final String A_DOWN = "aDown";
+    public static final String A_UP = "aUp";
+    public static final String D_DOWN = "dDown";
+    public static final String D_UP = "dUp";
+    public static final String LEFT_ARROW_DOWN = "leftArrowDown";
+    public static final String LEFT_ARROW_UP = "leftArrowUp";
+    public static final String RIGHT_ARROW_DOWN = "rightArrowDown";
+    public static final String RIGHT_ARROW_UP = "rightArrowUp";
 }
