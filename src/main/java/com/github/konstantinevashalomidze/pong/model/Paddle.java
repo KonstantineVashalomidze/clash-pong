@@ -56,6 +56,26 @@ public record Paddle(Vec2 center, double width, double height) {
         return this;
     }
 
+    public Paddle clampXTo(double minX, double maxX) {
+        if (center.x() < minX) {
+            return new Paddle(
+                    new Vec2(minX, center.y()),
+                    width,
+                    height
+            );
+        }
+
+        if (center.x() > maxX) {
+            return new Paddle(
+                new Vec2(maxX, center.y()),
+                width,
+                height
+            );
+        }
+        return this;
+    }
+
+
     public Paddle scaleHeight(double factor) {
         return new Paddle(center, width, height * factor);
     }

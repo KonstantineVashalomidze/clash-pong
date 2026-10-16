@@ -27,6 +27,9 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final int BRICK_HEIGHT = 40;
     private static final int BRICK_SPAWNING_AREA_X1 = 350, BRICK_SPAWNING_AREA_X2 = 450;
     private static final int BRICK_SPAWNING_AREA_Y1 = 100, BRICK_SPAWNING_AREA_Y2 = 400;
+    private static final int LEFT_HOME_X = 30;
+    private static final int RIGHT_HOME_X = 770;
+    private static final int STRAFE_RANGE = 120;
 
     public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
 
@@ -39,6 +42,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 this.left,
                 actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN),
                 actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN),
+                actionKeys.contains(A_DOWN) && !actionKeys.contains(D_DOWN),
+                actionKeys.contains(D_DOWN) && !actionKeys.contains(A_DOWN),
                 dt);
 
 
@@ -46,6 +51,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 this.right,
                 actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN),
                 actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN),
+                actionKeys.contains(LEFT_ARROW_DOWN) && !actionKeys.contains(RIGHT_ARROW_DOWN),
+                actionKeys.contains(RIGHT_ARROW_DOWN) && !actionKeys.contains(LEFT_ARROW_DOWN),
                 dt);
 
         // Ball movement
@@ -197,7 +204,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         );
     }
 
-    private Paddle movedPaddle(Player player, boolean up, boolean down, double dt) {
+    private Paddle movedPaddle(Player player, boolean up, boolean down, boolean left, boolean right, double dt) {
         boolean isFrozen = hasEffect(player.effects(), FREEZE);
         Paddle paddle = player.paddle();
         if (isFrozen) {
@@ -210,6 +217,19 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         if (down) {
             paddle = player.paddle().moveByY(PADDLE_SPEED * dt);
         }
+
+        boolean hasStrafe = hasEffect(player.effects(), STRAFE);
+
+        if (left && hasStrafe) {
+            paddle = paddle.moveByX(-PADDLE_SPEED * dt);
+        }
+
+        if (right && hasStrafe) {
+            paddle = paddle.moveByX(PADDLE_SPEED * dt);
+        }
+
+        boolean onLeftHalf = paddle.center().x() < playfield.width() / 2;
+        
 
         paddle = new Paddle(
                 applyEffects(paddle, player.effects()).clampTo(playfield).center(),
