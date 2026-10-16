@@ -28,8 +28,12 @@ public record Paddle(Vec2 center, double width, double height) {
 
     }
 
-    public Paddle moveBy(double dy) {
+    public Paddle moveByY(double dy) {
         return new Paddle(center.plus(new Vec2(0, dy)), width, height);
+    }
+
+    public Paddle moveByX(double dx) {
+        return new Paddle(center.plus(new Vec2(dx, 0)), width, height);
     }
 
     public Paddle clampTo(Playfield playfield) {

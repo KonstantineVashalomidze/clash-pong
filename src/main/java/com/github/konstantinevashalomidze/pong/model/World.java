@@ -1,6 +1,5 @@
 package com.github.konstantinevashalomidze.pong.model;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -205,11 +204,11 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             return paddle;
         }
         if (up) {
-            paddle = player.paddle().moveBy(-PADDLE_SPEED * dt);
+            paddle = player.paddle().moveByY(-PADDLE_SPEED * dt);
         }
 
         if (down) {
-            paddle = player.paddle().moveBy(PADDLE_SPEED * dt);
+            paddle = player.paddle().moveByY(PADDLE_SPEED * dt);
         }
 
         paddle = new Paddle(
