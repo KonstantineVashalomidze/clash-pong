@@ -182,42 +182,51 @@ public class GamePanel extends JPanel {
 
         // Strafe
         bindKey("pressed A", A_DOWN, () -> {
-
+            if (gameMode != null) {
+                actionKeys.add(A_DOWN);
+            }
         });
 
         bindKey("released A",  A_UP, () -> {
+            if (gameMode != null) {
+                actionKeys.remove(A_DOWN);
 
+            }
         });
 
         bindKey("pressed D", D_DOWN, () -> {
-
+            if (gameMode != null) {
+                actionKeys.add(D_DOWN);
+            }
         });
 
         bindKey("released D",  D_UP, () -> {
-
+            if (gameMode != null) {
+                actionKeys.remove(D_DOWN);
+            }
         });
 
         bindKey("pressed LEFT", LEFT_ARROW_DOWN, () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
-
+                actionKeys.add(LEFT_ARROW_DOWN);
             }
         });
 
         bindKey("released LEFT",  LEFT_ARROW_UP, () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
-
+                actionKeys.remove(LEFT_ARROW_DOWN);
             }
         });
 
         bindKey("pressed RIGHT", RIGHT_ARROW_DOWN, () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
-
+                actionKeys.add(RIGHT_ARROW_DOWN);
             }
         });
 
         bindKey("released RIGHT",  RIGHT_ARROW_UP, () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
-                
+                actionKeys.remove(RIGHT_ARROW_DOWN);
             }
         });
     }

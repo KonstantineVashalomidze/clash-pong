@@ -220,19 +220,26 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
 
         boolean hasStrafe = hasEffect(player.effects(), STRAFE);
 
-        if (left && hasStrafe) {
+        if (hasStrafe && left) {
             paddle = paddle.moveByX(-PADDLE_SPEED * dt);
         }
 
-        if (right && hasStrafe) {
+        if (hasStrafe && right) {
             paddle = paddle.moveByX(PADDLE_SPEED * dt);
         }
 
         boolean onLeftHalf = paddle.center().x() < playfield.width() / 2;
-        
+        double minX, maxX;
+        if (onLeftHalf) {
+            minX = LEFT_HOME_X;
+            maxX = playfield.width() / 2 - paddle.width() / 2;
+        } else {
+            minX = playfield.width() / 2 + paddle.width() / 2;
+            maxX = RIGHT_HOME_X;
+        }
 
         paddle = new Paddle(
-                applyEffects(paddle, player.effects()).clampTo(playfield).center(),
+                applyEffects(paddle, player.effects()).clampTo(playfield).clampXTo(minX, maxX).center(),
                 paddle.width(),
                 paddle.height()
         );
