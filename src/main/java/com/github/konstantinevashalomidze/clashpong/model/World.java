@@ -52,21 +52,10 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         boolean rightShieldUsed = scoring.rightShieldUsed();
 
         // Bounce ball off the paddles
-        boolean leftSmashHit = false;
-        boolean rightSmashHit = false;
-        boolean wasLeftHit = ball.overlaps(this.left.effectivePaddle()) && ball.velocity().x() < 0;
-        boolean wasRightHit = ball.overlaps(this.right.effectivePaddle()) && ball.velocity().x() > 0;
-        if (wasLeftHit || wasRightHit) {
-            if (wasLeftHit
-                    && this.left.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
-                leftSmashHit = true;
-            }
-            if (wasRightHit
-                    && this.right.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
-                rightSmashHit = true;
-            }
-            ball = ball.reverseX();
-        }
+        PaddleHitResult paddleHits = decidePaddleHits(ball);
+        ball = paddleHits.ball();
+        boolean leftSmashHit = paddleHits.leftSmashHit();
+        boolean rightSmashHit = paddleHits.rightSmashHit();
 
         // Energy management
         Energy leftEnergy = this.left.energy().refill(dt);
@@ -198,6 +187,31 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     }
 
     private record ScoringResult(Ball ball, int leftScore, int rightScore, boolean leftShieldUsed, boolean rightShieldUsed) {
+    }
+
+
+
+
+    private record PaddleHitResult(Ball ball, boolean leftSmashHit, boolean rightSmashHit) {
+    }
+
+    private PaddleHitResult decidePaddleHits(Ball ball) {
+        boolean leftSmashHit = false;
+        boolean rightSmashHit = false;
+        boolean wasLeftHit = ball.overlaps(this.left.effectivePaddle()) && ball.velocity().x() < 0;
+        boolean wasRightHit = ball.overlaps(this.right.effectivePaddle()) && ball.velocity().x() > 0;
+        if (wasLeftHit || wasRightHit) {
+            if (wasLeftHit
+                    && this.left.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
+                leftSmashHit = true;
+            }
+            if (wasRightHit
+                    && this.right.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
+                rightSmashHit = true;
+            }
+            ball = ball.reverseX();
+        }
+        return new PaddleHitResult(ball, leftSmashHit, rightSmashHit);
     }
 
 }
