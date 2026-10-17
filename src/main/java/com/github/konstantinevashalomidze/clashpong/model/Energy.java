@@ -22,9 +22,6 @@ public record Energy(double amount) {
     }
 
     public Energy spend(double cost) {
-        if (!canAfford(cost)) {
-            throw new IllegalArgumentException("Need energy of %.1f, have %.1f".formatted(cost, amount));
-        }
         return new Energy(amount - cost);
     }
 
