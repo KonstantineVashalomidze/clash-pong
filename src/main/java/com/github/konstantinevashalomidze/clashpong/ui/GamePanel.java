@@ -190,21 +190,7 @@ public class GamePanel extends JPanel {
             throw new IllegalStateException("World is null");
         }
 
-        // Ball
-        Ball ball = world.ball();
-        int ballCenterX = (int) ball.position().x();
-        int ballCenterY = (int) ball.position().y();
-        int ballRadius = (int) ball.radius();
-
-        // Ball color
-        g.setColor(Color.WHITE);
-        // Map ball into rectangle which is around that ball touching
-        g.fillOval(
-                ballCenterX - ballRadius,
-                ballCenterY - ballRadius,
-                2 * ballRadius,
-                2 * ballRadius
-        );
+        drawBall(g, world.ball());
 
         // Bricks
         drawBricks(g, world.bricks());
@@ -378,6 +364,14 @@ public class GamePanel extends JPanel {
         g.drawString("Move: UP / DOWN arrows", 550, 444);
         g.drawString("Strafe: LEFT / RIGHT arrows", 550, 468);
         g.drawString("Cards: K L ; '", 550, 492);
+    }
+
+    private void drawBall(Graphics g, Ball ball) {
+        g.setColor(Color.WHITE);
+        int centerX = (int) ball.position().x();
+        int centerY = (int) ball.position().y();
+        int radius = (int) ball.radius();
+        g.fillOval(centerX - radius, centerY - radius, 2 * radius, 2 * radius);
     }
 
     public void setWorld(World world) {
