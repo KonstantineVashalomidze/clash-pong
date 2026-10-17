@@ -11,11 +11,8 @@ import static com.github.konstantinevashalomidze.clashpong.model.Side.LEFT;
 import static com.github.konstantinevashalomidze.clashpong.model.Side.RIGHT;
 
 public record World(Playfield playfield, Ball ball, Player left, Player right, List<Brick> bricks) {
-    private static final int PADDLE_SPEED = 300;
     private static final int SERVE_SPEED_X = 200;
     private static final int SERVE_SPEED_Y = 120;
-    private static final double BIG_PADDLE_HEIGHT_SCALE = 1.5;
-    private static final double SHRINK_HEIGHT_SCALE = 0.5;
     private static final double SMASH_TIME_SCALE = 1.6;
     private static final double SLOW_FIELD_TIME_SCALE = 0.5;
     private static final List<GameAction> LEFT_CARD_KEYS = List.of(GameAction.P1_CARD_1, GameAction.P1_CARD_2,  GameAction.P1_CARD_3, GameAction.P1_CARD_4);
@@ -26,32 +23,28 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final int BRICK_HEIGHT = 40;
     private static final int BRICK_SPAWNING_AREA_X1 = 350, BRICK_SPAWNING_AREA_X2 = 450;
     private static final int BRICK_SPAWNING_AREA_Y1 = 100, BRICK_SPAWNING_AREA_Y2 = 400;
-    private static final int LEFT_HOME_X = 30;
-    private static final int RIGHT_HOME_X = 770;
 
     public World step(double dt, Set<GameAction> actionKeys, Set<GameAction> actionPressedKeys) {
-
         if (winner().isPresent()) {
             return this;
         }
 
         // Paddle movement
-        Paddle leftPaddle = movedPaddle(
-                this.left,
+        Paddle leftPaddle = this.left.movedPaddle(
                 actionKeys.contains(GameAction.P1_UP) && !actionKeys.contains(GameAction.P1_DOWN),
                 actionKeys.contains(GameAction.P1_DOWN) && !actionKeys.contains(GameAction.P1_UP),
                 actionKeys.contains(GameAction.P1_STRAFE_LEFT) && !actionKeys.contains(GameAction.P1_STRAFE_RIGHT),
                 actionKeys.contains(GameAction.P1_STRAFE_RIGHT) && !actionKeys.contains(GameAction.P1_STRAFE_LEFT),
-                dt);
+                dt,
+                playfield);
 
-
-        Paddle rightPaddle = movedPaddle(
-                this.right,
+        Paddle rightPaddle = this.right.movedPaddle(
                 actionKeys.contains(GameAction.P2_UP) && !actionKeys.contains(GameAction.P2_DOWN),
                 actionKeys.contains(GameAction.P2_DOWN) && !actionKeys.contains(GameAction.P2_UP),
                 actionKeys.contains(GameAction.P2_STRAFE_LEFT) && !actionKeys.contains(GameAction.P2_STRAFE_RIGHT),
                 actionKeys.contains(GameAction.P2_STRAFE_RIGHT) && !actionKeys.contains(GameAction.P2_STRAFE_LEFT),
-                dt);
+                dt,
+                playfield);
 
         // Ball movement
         Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
@@ -59,7 +52,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         boolean leftShieldUsed = false;
         int rightScore = this.right.score();
         if (ball.isOutLeft(playfield)) {
-            if (hasEffect(this.left.effects(), GOAL_SHIELD)) {
+            if (this.left.hasEffect(GOAL_SHIELD)) {
                 leftShieldUsed = true;
                 ball = ball.reverseX();
             } else {
@@ -72,7 +65,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         boolean rightShieldUsed = false;
         int leftScore = this.left.score();
         if (ball.isOutRight(playfield)) {
-            if (hasEffect(this.right.effects(), GOAL_SHIELD)) {
+            if (this.right.hasEffect(GOAL_SHIELD)) {
                 rightShieldUsed = true;
                 ball = ball.reverseX();
             } else {
@@ -84,8 +77,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         // Bounce ball off the paddles
         boolean leftSmashHit = false;
         boolean rightSmashHit = false;
-        boolean wasLeftHit = ball.overlaps(effectiveLeft()) && ball.velocity().x() < 0;
-        boolean wasRightHit = ball.overlaps(effectiveRight()) && ball.velocity().x() > 0;
+        boolean wasLeftHit = ball.overlaps(this.left.effectivePaddle()) && ball.velocity().x() < 0;
+        boolean wasRightHit = ball.overlaps(this.right.effectivePaddle()) && ball.velocity().x() > 0;
         if (wasLeftHit || wasRightHit) {
             if (wasLeftHit
                     && this.left.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
@@ -202,82 +195,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         );
     }
 
-    private Paddle movedPaddle(Player player, boolean up, boolean down, boolean left, boolean right, double dt) {
-        boolean onLeftHalf = player.paddle().center().x() < playfield.width() / 2;
-        boolean isFrozen = hasEffect(player.effects(), FREEZE);
-        Paddle paddle = player.paddle();
-        if (isFrozen) {
-            return paddle;
-        }
-        if (up) {
-            paddle = player.paddle().moveByY(-PADDLE_SPEED * dt);
-        }
-
-        if (down) {
-            paddle = player.paddle().moveByY(PADDLE_SPEED * dt);
-        }
-
-        boolean hasStrafe = hasEffect(player.effects(), STRAFE);
-
-        if (hasStrafe && left) {
-            paddle = paddle.moveByX(-PADDLE_SPEED * dt);
-        }
-
-        if (hasStrafe && right) {
-            paddle = paddle.moveByX(PADDLE_SPEED * dt);
-        }
-
-        double minX, maxX;
-        if (onLeftHalf) {
-            minX = LEFT_HOME_X;
-            maxX = playfield.width() / 2 - paddle.width() / 2;
-        } else {
-            minX = playfield.width() / 2 + paddle.width() / 2;
-            maxX = RIGHT_HOME_X;
-        }
-
-        if (!hasStrafe) {
-            if (onLeftHalf) {
-                paddle = paddle.moveByX(-PADDLE_SPEED * dt);
-            } else {
-                paddle = paddle.moveByX(PADDLE_SPEED * dt);
-            }
-        }
-
-        paddle = new Paddle(
-                applyEffects(paddle, player.effects()).clampTo(playfield).clampXTo(minX, maxX).center(),
-                paddle.width(),
-                paddle.height()
-        );
-
-        return paddle;
-    }
-
-    private static boolean hasEffect(List<Effect> effects, Card card) {
-        return effects.stream().anyMatch(e -> e.card() == card);
-    }
-
-    public Paddle effectiveLeft() {
-        return applyEffects(left.paddle(), this.left.effects());
-    }
-
-    public Paddle effectiveRight() {
-        return applyEffects(right.paddle(), this.right.effects());
-    }
-
-    private Paddle applyEffects(Paddle paddle, List<Effect> effects) {
-        for (Effect effect : effects) {
-            switch (effect.card()) {
-                case BIG_PADDLE -> paddle = paddle.scaleHeight(BIG_PADDLE_HEIGHT_SCALE);
-                case SHRINK -> paddle = paddle.scaleHeight(SHRINK_HEIGHT_SCALE);
-                case null, default -> {
-
-                }
-            }
-        }
-        return paddle;
-    }
-
     private static CardPlay playCard(Energy energy, Hand hand, Set<GameAction> actionPressedKeys, List<GameAction> cardKeys) {
         Card playedCard = null;
         for (int i = 0; i < cardKeys.size(); i++) {
@@ -304,8 +221,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 || this.right.effects().stream().anyMatch(e -> e.card() == SMASH && e.active())) {
             scale *= SMASH_TIME_SCALE;
         }
-        if (hasEffect(this.left.effects(), SLOW_FIELD)
-                || hasEffect(this.right.effects(), SLOW_FIELD)) {
+        if (this.left.hasEffect(SLOW_FIELD)
+                || this.left.hasEffect(SLOW_FIELD)) {
             scale *= SLOW_FIELD_TIME_SCALE;
         }
         return scale;
