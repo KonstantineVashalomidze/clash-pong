@@ -1,6 +1,5 @@
 package com.github.konstantinevashalomidze.clashpong.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -91,8 +90,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         Energy rightEnergy = this.right.energy().refill(dt);
 
         // Card usages
-        CardPlay leftPlay = playCard(leftEnergy, this.left.hand(), actionPressedKeys, LEFT_CARD_KEYS);
-        CardPlay rightPlay = playCard(rightEnergy, this.right.hand(), actionPressedKeys, RIGHT_CARD_KEYS);
+        CardPlay leftPlay = CardPlay.executed(leftEnergy, this.left.hand(), actionPressedKeys, LEFT_CARD_KEYS);
+        CardPlay rightPlay = CardPlay.executed(rightEnergy, this.right.hand(), actionPressedKeys, RIGHT_CARD_KEYS);
 
         // Manage effects
         List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
@@ -162,21 +161,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 ),
                 newBricks
         );
-    }
-
-    private static CardPlay playCard(Energy energy, Hand hand, Set<GameAction> actionPressedKeys, List<GameAction> cardKeys) {
-        Card playedCard = null;
-        for (int i = 0; i < cardKeys.size(); i++) {
-            var cardKey = cardKeys.get(i);
-            if (actionPressedKeys.contains(cardKey)) {
-                if (energy.canAfford(hand.cards().get(i).cost())) {
-                    playedCard = hand.cards().get(i);
-                    hand = hand.play(i);
-                    energy = energy.spend(playedCard.cost());
-                }
-            }
-        }
-        return new CardPlay(hand, energy, playedCard);
     }
 
     private double ballTimeScale() {
