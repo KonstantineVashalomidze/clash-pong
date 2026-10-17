@@ -9,16 +9,13 @@ public record Brick(
 
     public Brick {
         if (width <= 0 || height <= 0) {
-            throw new BrickArgumentException("Invalid brick width or height");
+            throw new IllegalArgumentException("Invalid brick width or height");
         }
 
-        if (Double.isNaN(width)
-            || Double.isInfinite(width)
-            || Double.isNaN(height)
-            || Double.isInfinite(height)
-            || Double.isNaN(remainingSeconds)
-            || Double.isInfinite(remainingSeconds)
-        ) throw new BrickArgumentException("Invalid brick argument");
+        if (!Double.isFinite(width)
+            || !Double.isFinite(height)
+            || !Double.isFinite(remainingSeconds)
+        ) throw new IllegalArgumentException("Invalid brick argument");
     }
 
     public double topLeftX() {

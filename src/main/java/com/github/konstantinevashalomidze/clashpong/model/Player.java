@@ -11,7 +11,7 @@ public record Player(
 ) {
     public Player {
         if (score < 0) {
-            throw new PlayerArgumentException("Player score is negative");
+            throw new IllegalArgumentException("Player score is negative");
         }
         effects = List.copyOf(effects);
     }

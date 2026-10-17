@@ -3,24 +3,13 @@ package com.github.konstantinevashalomidze.clashpong.model;
 public record Vec2(double x, double y) {
 
     public Vec2 {
-        if (Double.isNaN(x)) {
-            throw new Vec2ArgumentException("x is NaN");
+        if (!Double.isFinite(x)) {
+            throw new IllegalArgumentException("x is infinite");
         }
 
-        if (Double.isNaN(y)) {
-            throw new Vec2ArgumentException("y is NaN");
+        if (!Double.isFinite(y)) {
+            throw new IllegalArgumentException("y is infinite");
         }
-
-        if (Double.isInfinite(x)) {
-            throw new Vec2ArgumentException("x is infinite");
-        }
-
-        if (Double.isInfinite(y)) {
-            throw new Vec2ArgumentException("y is infinite");
-        }
-
-
-
     }
 
     public Vec2 plus(Vec2 other) {

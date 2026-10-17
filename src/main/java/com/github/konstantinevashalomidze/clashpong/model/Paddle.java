@@ -3,27 +3,21 @@ package com.github.konstantinevashalomidze.clashpong.model;
 public record Paddle(Vec2 center, double width, double height) {
 
     public Paddle {
-        if (Double.isNaN(width)) {
-            throw new PaddleArgumentException("width is NaN");
-        }
-        if (Double.isNaN(height)) {
-            throw new PaddleArgumentException("height is NaN");
+
+        if (!Double.isFinite(width)) {
+            throw new IllegalArgumentException("width is Infinite");
         }
 
-        if (Double.isInfinite(width)) {
-            throw new PaddleArgumentException("width is Infinite");
-        }
-
-        if (Double.isInfinite(height)) {
-            throw new PaddleArgumentException("height is Infinite");
+        if (!Double.isFinite(height)) {
+            throw new IllegalArgumentException("height is Infinite");
         }
 
         if (width <= 0) {
-            throw new PaddleArgumentException("width is 0 or less");
+            throw new IllegalArgumentException("width is 0 or less");
         }
 
         if (height <= 0) {
-            throw new PaddleArgumentException("height is 0 or less");
+            throw new IllegalArgumentException("height is 0 or less");
         }
 
     }

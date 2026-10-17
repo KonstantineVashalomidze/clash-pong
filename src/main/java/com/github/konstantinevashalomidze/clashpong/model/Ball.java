@@ -3,16 +3,12 @@ package com.github.konstantinevashalomidze.clashpong.model;
 public record Ball(Vec2 position, Vec2 velocity, double radius) {
 
     public Ball {
-        if (Double.isNaN(radius)) {
-            throw new BallArgumentException("radius is NaN");
-        }
-
-        if (Double.isInfinite(radius)) {
-            throw new BallArgumentException("radius is infinite");
+        if (!Double.isFinite(radius)) {
+            throw new IllegalArgumentException("invalid radius");
         }
 
         if (radius <= 0) {
-            throw new BallArgumentException("radius is less than or equal to 0");
+            throw new IllegalArgumentException("radius is less than or equal to 0");
         }
     }
 

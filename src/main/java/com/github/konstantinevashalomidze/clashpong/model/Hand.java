@@ -6,11 +6,11 @@ import java.util.List;
 public record Hand(List<Card> cards, List<Card> queue) {
     public Hand {
         if (cards.size() != 4) {
-            throw new HandArgumentException("Invalid cards argument");
+            throw new IllegalArgumentException("Invalid cards argument");
         }
 
         if (queue.size() != 4) {
-            throw new HandArgumentException("Invalid queue argument");
+            throw new IllegalArgumentException("Invalid queue argument");
         }
 
         cards = List.copyOf(cards);
@@ -19,7 +19,7 @@ public record Hand(List<Card> cards, List<Card> queue) {
 
     public Hand play(int slot) {
         if (slot < 0 || slot >= cards.size()) {
-            throw new HandArgumentException("Invalid slot argument");
+            throw new IllegalArgumentException("Invalid slot argument");
         }
         List<Card> hand = new ArrayList<>(this.cards);
         List<Card> queue = new ArrayList<>(this.queue);
