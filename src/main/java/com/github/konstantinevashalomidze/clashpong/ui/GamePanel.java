@@ -245,6 +245,7 @@ public class GamePanel extends JPanel {
             g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
             g.drawString("Press 1: Two players", 150, 280);
             g.drawString("Press 2: Vs computer", 150, 330);
+            drawMenuControls(g);
             return;
         }
 
@@ -423,6 +424,23 @@ public class GamePanel extends JPanel {
             g.drawString(effectLabel, startX, 705);
             startX += g.getFontMetrics().stringWidth(effectLabel) + 4;
         }
+    }
+
+    private void drawMenuControls(Graphics g) {
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        // Left
+        g.drawString("Left player", 150, 420);
+        g.drawString("Move: W / S", 150, 444);
+        g.drawString("Strafe: A / D", 150, 468);
+        g.drawString("Cards: F G H J", 150, 492);
+
+
+        // Right
+        g.drawString("Right player", 550, 420);
+        g.drawString("Move: UP / DOWN arrows", 550, 444);
+        g.drawString("Strafe: LEFT / RIGHT arrows", 550, 468);
+        g.drawString("Cards: K L ; '", 550, 492);
     }
 
     public void setWorld(World world) {
