@@ -1,5 +1,7 @@
 package com.github.konstantinevashalomidze.clashpong.model;
 
+import java.util.List;
+
 public record Ball(Vec2 position, Vec2 velocity, double radius) {
 
     public Ball {
@@ -84,6 +86,23 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
             new Vec2(velocity.x(), (-1) * velocity.y()),
             radius
         );
+    }
+
+    public static Ball servedFrom(Playfield playfield, double velocityX, double velocityY, double radius) {
+        return new  Ball(
+                new Vec2(playfield.width() / 2, playfield.height() / 2),
+                new Vec2(velocityX, velocityY),
+                radius
+        );
+    }
+
+    public Ball bounceOffFirstOverlapping(List<Brick> bricks) {
+        for (var brick : bricks) {
+            if (overlaps(brick)) {
+                return bounceOffBrick(brick);
+            }
+        }
+        return this;
     }
 
 }

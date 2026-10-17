@@ -57,7 +57,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 ball = ball.reverseX();
             } else {
                 rightScore += 1;
-                ball = serve(ball, SERVE_SPEED_X);
+                ball = Ball.servedFrom(playfield, SERVE_SPEED_X, SERVE_SPEED_Y, ball.radius());
             }
 
         }
@@ -70,7 +70,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 ball = ball.reverseX();
             } else {
                 leftScore += 1;
-                ball = serve(ball, -SERVE_SPEED_X);
+                ball = Ball.servedFrom(playfield, -SERVE_SPEED_X, SERVE_SPEED_Y, ball.radius());
             }
         }
 
@@ -121,8 +121,13 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             rightEffects.removeIf(e -> e.card() == GOAL_SHIELD);
         }
 
-        applyPlayedCard(leftPlay.played(), leftEffects, rightEffects);
-        applyPlayedCard(rightPlay.played(), rightEffects, leftEffects);
+        if (leftPlay.played() != null) {
+            leftPlay.played().applyEffect(leftEffects, rightEffects);
+        }
+
+        if (rightPlay.played() != null) {
+            rightPlay.played().applyEffect(rightEffects, leftEffects);
+        }
 
         List<Brick> newBricks = bricks;
 
@@ -131,14 +136,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 .filter(b -> !b.isExpired())
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < newBricks.size(); i++) {
-            Brick currentBrick = newBricks.get(i);
-            if (ball.overlaps(currentBrick)) {
-                ball = ball.bounceOffBrick(currentBrick);
-                break;
-            }
-        }
-
+        ball = ball.bounceOffFirstOverlapping(newBricks);
         newBricks.removeIf(ball::overlaps);
 
         if (leftPlay.played() == BARRICADE) {
@@ -171,30 +169,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         );
     }
 
-    private void applyPlayedCard(Card played, List<Effect> ownEffects, List<Effect> opponentEffects) {
-        switch (played) {
-            case BARRICADE -> refresh(ownEffects, BARRICADE, true);
-            case BIG_PADDLE -> refresh(ownEffects, BIG_PADDLE, true);
-            case SHRINK -> refresh(opponentEffects, SHRINK, true);
-            case FREEZE -> refresh(opponentEffects, FREEZE, true);
-            case SMASH -> refresh(ownEffects, SMASH, false);
-            case SLOW_FIELD -> refresh(ownEffects, SLOW_FIELD, true);
-            case STRAFE -> refresh(ownEffects, STRAFE, true);
-            case GOAL_SHIELD -> refresh(ownEffects, GOAL_SHIELD, true);
-            case null, default -> {
-
-            }
-        }
-    }
-
-    private Ball serve(Ball ball, double velocityX) {
-        return new Ball(
-                new Vec2(playfield.width() / 2, playfield.height() / 2),
-                new Vec2(velocityX, SERVE_SPEED_Y),
-                ball.radius()
-        );
-    }
-
     private static CardPlay playCard(Energy energy, Hand hand, Set<GameAction> actionPressedKeys, List<GameAction> cardKeys) {
         Card playedCard = null;
         for (int i = 0; i < cardKeys.size(); i++) {
@@ -208,11 +182,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             }
         }
         return new CardPlay(hand, energy, playedCard);
-    }
-
-    private static void refresh(List<Effect> effects, Card card, boolean active) {
-        effects.removeIf(e -> e.card() == card);
-        effects.add(new Effect(card, card.duration(), active));
     }
 
     private double ballTimeScale() {
