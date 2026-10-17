@@ -43,30 +43,13 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         // Ball movement
         Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
 
-        boolean leftShieldUsed = false;
-        int rightScore = this.right.score();
-        if (ball.isOutLeft(playfield)) {
-            if (this.left.hasEffect(GOAL_SHIELD)) {
-                leftShieldUsed = true;
-                ball = ball.reverseX();
-            } else {
-                rightScore += 1;
-                ball = Ball.servedFrom(playfield, SERVE_SPEED_X, SERVE_SPEED_Y, ball.radius());
-            }
-
-        }
-
-        boolean rightShieldUsed = false;
-        int leftScore = this.left.score();
-        if (ball.isOutRight(playfield)) {
-            if (this.right.hasEffect(GOAL_SHIELD)) {
-                rightShieldUsed = true;
-                ball = ball.reverseX();
-            } else {
-                leftScore += 1;
-                ball = Ball.servedFrom(playfield, -SERVE_SPEED_X, SERVE_SPEED_Y, ball.radius());
-            }
-        }
+        // Scoring
+        ScoringResult scoring = decideScoring(ball);
+        ball = scoring.ball();
+        int leftScore = scoring.leftScore();
+        int rightScore = scoring.rightScore();
+        boolean leftShieldUsed = scoring.leftShieldUsed();
+        boolean rightShieldUsed = scoring.rightShieldUsed();
 
         // Bounce ball off the paddles
         boolean leftSmashHit = false;
@@ -90,8 +73,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         Energy rightEnergy = this.right.energy().refill(dt);
 
         // Card usages
-        CardPlay leftPlay = CardPlay.executed(leftEnergy, this.left.hand(), actionPressedKeys, LEFT_CARD_KEYS);
-        CardPlay rightPlay = CardPlay.executed(rightEnergy, this.right.hand(), actionPressedKeys, RIGHT_CARD_KEYS);
+        CardPlay leftPlay = CardPlay.decidePlay(leftEnergy, this.left.hand(), actionPressedKeys, LEFT_CARD_KEYS);
+        CardPlay rightPlay = CardPlay.decidePlay(rightEnergy, this.right.hand(), actionPressedKeys, RIGHT_CARD_KEYS);
 
         // Manage effects
         List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
@@ -185,4 +168,36 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             return Optional.empty();
         }
     }
+
+    private ScoringResult decideScoring(Ball ball) {
+        boolean leftShieldUsed = false;
+        int rightScore = this.right.score();
+        if (ball.isOutLeft(playfield)) {
+            if (this.left.hasEffect(GOAL_SHIELD)) {
+                leftShieldUsed = true;
+                ball = ball.reverseX();
+            } else {
+                rightScore += 1;
+                ball = Ball.servedFrom(playfield, SERVE_SPEED_X, SERVE_SPEED_Y, ball.radius());
+            }
+
+        }
+
+        boolean rightShieldUsed = false;
+        int leftScore = this.left.score();
+        if (ball.isOutRight(playfield)) {
+            if (this.right.hasEffect(GOAL_SHIELD)) {
+                rightShieldUsed = true;
+                ball = ball.reverseX();
+            } else {
+                leftScore += 1;
+                ball = Ball.servedFrom(playfield, -SERVE_SPEED_X, SERVE_SPEED_Y, ball.radius());
+            }
+        }
+        return new ScoringResult(ball, leftScore, rightScore, leftShieldUsed, rightShieldUsed);
+    }
+
+    private record ScoringResult(Ball ball, int leftScore, int rightScore, boolean leftShieldUsed, boolean rightShieldUsed) {
+    }
+
 }

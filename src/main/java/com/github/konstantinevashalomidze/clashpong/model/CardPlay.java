@@ -9,7 +9,7 @@ public record CardPlay(
         Card played
 ) {
 
-    public static CardPlay executed(Energy energy, Hand hand, Set<GameAction> actionPressedKeys, List<GameAction> cardKeys) {
+    public static CardPlay decidePlay(Energy energy, Hand hand, Set<GameAction> actionPressedKeys, List<GameAction> cardKeys) {
         Card playedCard = null;
         for (int i = 0; i < cardKeys.size(); i++) {
             var cardKey = cardKeys.get(i);
