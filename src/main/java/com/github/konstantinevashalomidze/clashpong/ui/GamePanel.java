@@ -177,7 +177,7 @@ public class GamePanel extends JPanel {
         g2d.setRenderingHint(KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON);
 
         if (gameMode == null) {
-            drawMenuControls(g);
+            drawMenu(g);
             return;
         }
 
