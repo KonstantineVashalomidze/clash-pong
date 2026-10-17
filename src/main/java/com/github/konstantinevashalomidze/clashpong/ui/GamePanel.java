@@ -24,96 +24,18 @@ public class GamePanel extends JPanel {
     private GameMode gameMode;
     public GamePanel(Supplier<World> worldFactory) {
         this.world = worldFactory.get();
+        bindKeys(worldFactory);
+    }
 
+    private void bindKeys(Supplier<World> worldFactory) {
         setBackground(Color.BLACK);
 
-        // Left movement
-        bindKey("pressed W", "p1UpPress", () -> {
-            if (gameMode != null) {
-                actionKeys.add(GameAction.P1_UP);
-            }
-        });
-        bindKey("released W", "p1UpRelease", () -> {
-            if (gameMode != null) {
-                actionKeys.remove(GameAction.P1_UP);
-            }
-        });
+        bindMovementKeys();
 
-        bindKey("pressed S", "p1DownPress", () -> {
-            if (gameMode != null) {
-                actionKeys.add(GameAction.P1_DOWN);
-            }
-        });
-        bindKey("released S", "p1DownRelease", () -> {
-            if (gameMode != null) {
-                actionKeys.remove(GameAction.P1_DOWN);
-            }
-        });
+        bindGameModeKeys();
 
-        // Right movement
-        bindKey("pressed UP", "p2UpPress", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.add(GameAction.P2_UP);
-            }
-        });
-        bindKey("released UP", "p2UpRelease", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.remove(GameAction.P2_UP);
-            }
-        });
+        bindCardKeys();
 
-        bindKey("pressed DOWN", "p2DownPress", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.add(GameAction.P2_DOWN);
-            }
-        });
-        bindKey("released DOWN", "p2DownRelease", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.remove(GameAction.P2_DOWN);
-            }
-        });
-
-        // Game mode select
-        bindKey("pressed 1", "selectHumanVsHuman", () -> {
-            if (gameMode == null) {
-                gameMode = HUMAN_VS_HUMAN;
-            }
-        });
-        bindKey("pressed 2", "selectHumanVsComputer", () -> {
-            if (gameMode == null) {
-                gameMode = HUMAN_VS_COMPUTER;
-            }
-        });
-
-        // Left cards
-        bindKey("pressed F", "p1Card1", () -> actionPressedKeys.add(GameAction.P1_CARD_1));
-        bindKey("pressed G", "p1Card2", () -> actionPressedKeys.add(GameAction.P1_CARD_2));
-        bindKey("pressed H", "p1Card3", () -> actionPressedKeys.add(GameAction.P1_CARD_3));
-        bindKey("pressed J", "p1Card4", () -> actionPressedKeys.add(GameAction.P1_CARD_4));
-
-        // Right cards
-        bindKey("pressed K", "p2Card1", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(GameAction.P2_CARD_1);
-            }
-        });
-        bindKey("pressed L", "p2Card2", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(GameAction.P2_CARD_2);
-            }
-        });
-        bindKey("pressed SEMICOLON", "p2Card3", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(GameAction.P2_CARD_3);
-            }
-        });
-        bindKey("pressed QUOTE", "p2Card4", () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(GameAction.P2_CARD_4);
-            }
-        });
-
-        // Play again
         bindKey("pressed R", "replay", () -> {
             if (world.winner().isPresent()) {
                 actionKeys.clear();
@@ -121,7 +43,10 @@ public class GamePanel extends JPanel {
             }
         });
 
-        // Left strafe
+        bindStrafeKeys();
+    }
+
+    private void bindStrafeKeys() {
         bindKey("pressed A", "p1StrafeLeftPress", () -> {
             if (gameMode != null) {
                 actionKeys.add(GameAction.P1_STRAFE_LEFT);
@@ -144,7 +69,6 @@ public class GamePanel extends JPanel {
             }
         });
 
-        // Right strafe
         bindKey("pressed LEFT", "p2StrafeLeftPress", () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
                 actionKeys.add(GameAction.P2_STRAFE_LEFT);
@@ -164,6 +88,93 @@ public class GamePanel extends JPanel {
         bindKey("released RIGHT", "p2StrafeRightRelease", () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
                 actionKeys.remove(GameAction.P2_STRAFE_RIGHT);
+            }
+        });
+    }
+
+    private void bindGameModeKeys() {
+        bindKey("pressed 1", "selectHumanVsHuman", () -> {
+            if (gameMode == null) {
+                gameMode = HUMAN_VS_HUMAN;
+            }
+        });
+        bindKey("pressed 2", "selectHumanVsComputer", () -> {
+            if (gameMode == null) {
+                gameMode = HUMAN_VS_COMPUTER;
+            }
+        });
+    }
+
+    private void bindMovementKeys() {
+        bindKey("pressed W", "p1UpPress", () -> {
+            if (gameMode != null) {
+                actionKeys.add(GameAction.P1_UP);
+            }
+        });
+        bindKey("released W", "p1UpRelease", () -> {
+            if (gameMode != null) {
+                actionKeys.remove(GameAction.P1_UP);
+            }
+        });
+
+        bindKey("pressed S", "p1DownPress", () -> {
+            if (gameMode != null) {
+                actionKeys.add(GameAction.P1_DOWN);
+            }
+        });
+        bindKey("released S", "p1DownRelease", () -> {
+            if (gameMode != null) {
+                actionKeys.remove(GameAction.P1_DOWN);
+            }
+        });
+
+        bindKey("pressed UP", "p2UpPress", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.add(GameAction.P2_UP);
+            }
+        });
+        bindKey("released UP", "p2UpRelease", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.remove(GameAction.P2_UP);
+            }
+        });
+
+        bindKey("pressed DOWN", "p2DownPress", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.add(GameAction.P2_DOWN);
+            }
+        });
+        bindKey("released DOWN", "p2DownRelease", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.remove(GameAction.P2_DOWN);
+            }
+        });
+    }
+
+    private void bindCardKeys() {
+        bindKey("pressed F", "p1Card1", () -> actionPressedKeys.add(GameAction.P1_CARD_1));
+        bindKey("pressed G", "p1Card2", () -> actionPressedKeys.add(GameAction.P1_CARD_2));
+        bindKey("pressed H", "p1Card3", () -> actionPressedKeys.add(GameAction.P1_CARD_3));
+        bindKey("pressed J", "p1Card4", () -> actionPressedKeys.add(GameAction.P1_CARD_4));
+
+        bindKey("pressed K", "p2Card1", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_1);
+            }
+        });
+        bindKey("pressed L", "p2Card2", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_2);
+            }
+        });
+        bindKey("pressed SEMICOLON", "p2Card3", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_3);
+            }
+        });
+        bindKey("pressed QUOTE", "p2Card4", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_4);
             }
         });
     }
