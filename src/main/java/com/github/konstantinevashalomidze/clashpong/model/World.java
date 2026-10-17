@@ -66,34 +66,10 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         CardPlay rightPlay = CardPlay.decidePlay(rightEnergy, this.right.hand(), actionPressedKeys, RIGHT_CARD_KEYS);
 
         // Manage effects
-        List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
-        List<Effect> rightEffects = this.right().effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
-
-        if (leftSmashHit) {
-            leftEffects.removeIf(e -> e.card() == SMASH && !e.active());
-            leftEffects.add(new Effect(SMASH, SMASH.duration(), true));
-        }
-
-        if (rightSmashHit) {
-            rightEffects.removeIf(e -> e.card() == SMASH && !e.active());
-            rightEffects.add(new Effect(SMASH, SMASH.duration(), true));
-        }
-
-        if (leftShieldUsed) {
-            leftEffects.removeIf(e -> e.card() == GOAL_SHIELD);
-        }
-
-        if (rightShieldUsed) {
-            rightEffects.removeIf(e -> e.card() == GOAL_SHIELD);
-        }
-
-        if (leftPlay.played() != null) {
-            leftPlay.played().applyEffect(leftEffects, rightEffects);
-        }
-
-        if (rightPlay.played() != null) {
-            rightPlay.played().applyEffect(rightEffects, leftEffects);
-        }
+        EffectsResult effects = decideEffects(leftSmashHit, rightSmashHit, leftShieldUsed,
+                rightShieldUsed, leftPlay, rightPlay, dt);
+        List<Effect> leftEffects = effects.left();
+        List<Effect> rightEffects = effects.right();
 
         List<Brick> newBricks = bricks;
 
@@ -212,6 +188,51 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             ball = ball.reverseX();
         }
         return new PaddleHitResult(ball, leftSmashHit, rightSmashHit);
+    }
+
+
+    private record EffectsResult(List<Effect> left, List<Effect> right) {
+    }
+
+    private EffectsResult decideEffects(
+            boolean leftSmashHit,
+            boolean rightSmashHit,
+            boolean leftShieldUsed,
+            boolean rightShieldUsed,
+            CardPlay leftPlay,
+            CardPlay rightPlay,
+            double dt
+    ) {
+        List<Effect> leftEffects = this.left.effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
+        List<Effect> rightEffects = this.right().effects().stream().map(e -> e.tick(dt)).filter(e -> !e.isExpired()).collect(Collectors.toList());
+
+        if (leftSmashHit) {
+            leftEffects.removeIf(e -> e.card() == SMASH && !e.active());
+            leftEffects.add(new Effect(SMASH, SMASH.duration(), true));
+        }
+
+        if (rightSmashHit) {
+            rightEffects.removeIf(e -> e.card() == SMASH && !e.active());
+            rightEffects.add(new Effect(SMASH, SMASH.duration(), true));
+        }
+
+        if (leftShieldUsed) {
+            leftEffects.removeIf(e -> e.card() == GOAL_SHIELD);
+        }
+
+        if (rightShieldUsed) {
+            rightEffects.removeIf(e -> e.card() == GOAL_SHIELD);
+        }
+
+        if (leftPlay.played() != null) {
+            leftPlay.played().applyEffect(leftEffects, rightEffects);
+        }
+
+        if (rightPlay.played() != null) {
+            rightPlay.played().applyEffect(rightEffects, leftEffects);
+        }
+
+        return new EffectsResult(leftEffects, rightEffects);
     }
 
 }
