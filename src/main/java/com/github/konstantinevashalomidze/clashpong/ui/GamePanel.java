@@ -197,23 +197,19 @@ public class GamePanel extends JPanel {
         drawEnergyBar(g, world.left().energy(), 20, 230);
         drawEnergyBar(g, world.right().energy(), 580, 555);
 
+
+        // Separator
+        g.setColor(Color.WHITE);
+        g.drawLine(0, 600, getWidth(), 600);
+
         drawHand(g, world.left().hand(), 20, LEFT_KEY_LABELS, world.left().energy());
         drawHand(g, world.right().hand(), 485, RIGHT_KEY_LABELS, world.right().energy());
 
         drawEffects(g, world.left().effects(), 20);
         drawEffects(g, world.right().effects(), 485);
 
-        // Show winner
         if (world.winner().isPresent()) {
-            g.setColor(new Color(0, 0, 0, 170));
-            g.fillRect(0, 0, getWidth(), getHeight());
-            g.setColor(Color.WHITE);
-            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
-            Side winner =  world.winner().get();
-            String winnerLabel = winner + " PLAYER WINS";
-            g.drawString(winnerLabel, (getWidth() - g.getFontMetrics().stringWidth(winnerLabel)) / 2, 300);
-            g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-            g.drawString("Press R to play again", (getWidth() - g.getFontMetrics().stringWidth(winnerLabel)) / 2, 350);
+            drawWinScreen(g, world.winner().get());
         }
 
         // For linux
@@ -336,6 +332,17 @@ public class GamePanel extends JPanel {
         g.drawString("Press 1: Two players", 150, 280);
         g.drawString("Press 2: Vs computer", 150, 330);
         drawMenuControls(g);
+    }
+    
+    private void drawWinScreen(Graphics g, Side winner) {
+        g.setColor(new Color(0, 0, 0, 170));
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 25));
+        String winnerLabel = winner + " PLAYER WINS";
+        g.drawString(winnerLabel, (getWidth() - g.getFontMetrics().stringWidth(winnerLabel)) / 2, 300);
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        g.drawString("Press R to play again", (getWidth() - g.getFontMetrics().stringWidth(winnerLabel)) / 2, 350);
     }
 
     public void setWorld(World world) {
