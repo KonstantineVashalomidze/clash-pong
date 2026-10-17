@@ -28,7 +28,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final int BRICK_SPAWNING_AREA_Y1 = 100, BRICK_SPAWNING_AREA_Y2 = 400;
     private static final int LEFT_HOME_X = 30;
     private static final int RIGHT_HOME_X = 770;
-    private static final int STRAFE_RANGE = 120;
 
     public World step(double dt, Set<GameAction> actionKeys, Set<GameAction> actionPressedKeys) {
 
