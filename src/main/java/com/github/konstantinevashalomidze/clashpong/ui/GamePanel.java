@@ -167,10 +167,26 @@ public class GamePanel extends JPanel {
         bindKey("pressed J", J_DOWN, () -> actionPressedKeys.add(J_DOWN));
 
         // For right cards
-        bindKey("pressed K", K_DOWN, () -> actionPressedKeys.add(K_DOWN));
-        bindKey("pressed L", L_DOWN, () -> actionPressedKeys.add(L_DOWN));
-        bindKey("pressed SEMICOLON", SEMI_DOWN, () -> actionPressedKeys.add(SEMI_DOWN));
-        bindKey("pressed QUOTE", SINGLE_QUOTE_DOWN, () -> actionPressedKeys.add(SINGLE_QUOTE_DOWN));
+        bindKey("pressed K", K_DOWN, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(K_DOWN);
+            }
+        });
+        bindKey("pressed L", L_DOWN, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(L_DOWN);
+            }
+        });
+        bindKey("pressed SEMICOLON", SEMI_DOWN, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(SEMI_DOWN);
+            }
+        });
+        bindKey("pressed QUOTE", SINGLE_QUOTE_DOWN, () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(SINGLE_QUOTE_DOWN);
+            }
+        });
 
         // For play again
         bindKey("pressed R", R_DOWN, () -> {
