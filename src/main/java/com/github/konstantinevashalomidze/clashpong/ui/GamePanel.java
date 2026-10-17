@@ -197,12 +197,7 @@ public class GamePanel extends JPanel {
         drawPaddle(g, world.left().effectivePaddle());
         drawPaddle(g, world.right().effectivePaddle());
 
-        // Draw scores
-        g.setColor(Color.WHITE);
-        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
-
-        g.drawString(Integer.toString(world.left().score()), 350, 50);
-        g.drawString(Integer.toString(world.right().score()), 430, 50);
+        drawScores(g, world);
 
         // Draw energy bars
         // Outline
@@ -347,6 +342,13 @@ public class GamePanel extends JPanel {
         int width = (int) paddle.width();
         int height = (int) paddle.height();
         g.fillRect(centerX - width / 2, centerY - height / 2, width, height);
+    }
+
+    private void drawScores(Graphics g, World world) {
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
+        g.drawString(Integer.toString(world.left().score()), 350, 50);
+        g.drawString(Integer.toString(world.right().score()), 430, 50);
     }
 
     public void setWorld(World world) {
