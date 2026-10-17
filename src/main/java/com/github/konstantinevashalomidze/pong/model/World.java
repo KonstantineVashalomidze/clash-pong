@@ -205,6 +205,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     }
 
     private Paddle movedPaddle(Player player, boolean up, boolean down, boolean left, boolean right, double dt) {
+        boolean onLeftHalf = player.paddle().center().x() < playfield.width() / 2;
         boolean isFrozen = hasEffect(player.effects(), FREEZE);
         Paddle paddle = player.paddle();
         if (isFrozen) {
@@ -228,7 +229,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             paddle = paddle.moveByX(PADDLE_SPEED * dt);
         }
 
-        boolean onLeftHalf = paddle.center().x() < playfield.width() / 2;
         double minX, maxX;
         if (onLeftHalf) {
             minX = LEFT_HOME_X;
@@ -236,6 +236,14 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         } else {
             minX = playfield.width() / 2 + paddle.width() / 2;
             maxX = RIGHT_HOME_X;
+        }
+
+        if (!hasStrafe) {
+            if (onLeftHalf) {
+                paddle = paddle.moveByX(-PADDLE_SPEED * dt);
+            } else {
+                paddle = paddle.moveByX(PADDLE_SPEED * dt);
+            }
         }
 
         paddle = new Paddle(
@@ -262,26 +270,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private Paddle applyEffects(Paddle paddle, List<Effect> effects) {
         for (Effect effect : effects) {
             switch (effect.card()) {
-                case BARRICADE -> {
-
-                }
                 case BIG_PADDLE -> paddle = paddle.scaleHeight(BIG_PADDLE_HEIGHT_SCALE);
                 case SHRINK -> paddle = paddle.scaleHeight(SHRINK_HEIGHT_SCALE);
-                case FREEZE -> {
-
-                }
-                case SMASH -> {
-
-                }
-                case SLOW_FIELD -> {
-
-                }
-                case STRAFE -> {
-
-                }
-                case GOAL_SHIELD -> {
-
-                }
                 case null, default -> {
 
                 }
