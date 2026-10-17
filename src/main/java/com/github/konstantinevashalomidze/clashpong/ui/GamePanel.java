@@ -176,12 +176,7 @@ public class GamePanel extends JPanel {
         g2d.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON);
 
-        // Draw menu
         if (gameMode == null) {
-            g.setColor(Color.WHITE);
-            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
-            g.drawString("Press 1: Two players", 150, 280);
-            g.drawString("Press 2: Vs computer", 150, 330);
             drawMenuControls(g);
             return;
         }
@@ -199,43 +194,12 @@ public class GamePanel extends JPanel {
 
         drawScores(g, world);
 
-        // Draw energy bars
-        // Outline
-        g.setColor(Color.BLACK);
-        g.drawRect(20, 660, 200, 20);
+        drawEnergyBar(g, world.left().energy(), 20, 230);
+        drawEnergyBar(g, world.right().energy(), 580, 555);
 
-        g.setColor(Color.BLACK);
-        g.drawRect(580, 660, 200, 20);
-
-        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
-
-        g.setColor(Color.WHITE);
-        Energy leftEnergy = world.left().energy();
-        g.fillRect(20, 660, (int) (leftEnergy.amount() / 10 * 200), 20);
-        g.drawString(String.valueOf((int) Math.floor(leftEnergy.amount())), 230, 660 + 20);
-        for (int i = 1; i <= 9; i++) {
-            g.setColor(Color.BLACK);
-            g.drawLine(20 + i * 20, 660, 20 + i * 20, 660 + 20);
-        }
-
-        g.setColor(Color.WHITE);
-        Energy rightEnergy = world.right().energy();
-        g.fillRect(580, 660, (int) (rightEnergy.amount() / 10 * 200), 20);
-        g.drawString(String.valueOf((int) Math.floor(rightEnergy.amount())), 555, 660 + 20);
-        for (int i = 1; i <= 9; i++) {
-            g.setColor(Color.BLACK);
-            g.drawLine(580 + i * 20, 660, 580 + i * 20, 660 + 20);
-        }
-
-        g.setColor(Color.WHITE);
-        g.drawLine(0, 600, getWidth(), 600);
-
-
-        // Hand
         drawHand(g, world.left().hand(), 20, LEFT_KEY_LABELS, world.left().energy());
         drawHand(g, world.right().hand(), 485, RIGHT_KEY_LABELS, world.right().energy());
 
-        // Draw effect hints
         drawEffects(g, world.left().effects(), 20);
         drawEffects(g, world.right().effects(), 485);
 
@@ -349,6 +313,29 @@ public class GamePanel extends JPanel {
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
         g.drawString(Integer.toString(world.left().score()), 350, 50);
         g.drawString(Integer.toString(world.right().score()), 430, 50);
+    }
+
+    private void drawEnergyBar(Graphics g, Energy energy, int startX, int labelX) {
+        g.setColor(Color.BLACK);
+        g.drawRect(startX, 660, 200, 20);
+
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 18));
+        g.setColor(Color.WHITE);
+        g.fillRect(startX, 660, (int) (energy.amount() / 10 * 200), 20);
+        g.drawString(String.valueOf((int) Math.floor(energy.amount())), labelX, 660 + 20);
+
+        for (int i = 1; i <= 9; i++) {
+            g.setColor(Color.BLACK);
+            g.drawLine(startX + i * 20, 660, startX + i * 20, 660 + 20);
+        }
+    }
+
+    private void drawMenu(Graphics g) {
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+        g.drawString("Press 1: Two players", 150, 280);
+        g.drawString("Press 2: Vs computer", 150, 330);
+        drawMenuControls(g);
     }
 
     public void setWorld(World world) {
