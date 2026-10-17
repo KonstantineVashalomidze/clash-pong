@@ -1,4 +1,4 @@
-package com.github.konstantinevashalomidze.pong.model;
+package com.github.konstantinevashalomidze.clashpong.model;
 
 public enum Card {
     BARRICADE(3, 12),

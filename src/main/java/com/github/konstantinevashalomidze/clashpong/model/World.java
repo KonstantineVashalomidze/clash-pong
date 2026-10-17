@@ -1,4 +1,4 @@
-package com.github.konstantinevashalomidze.pong.model;
+package com.github.konstantinevashalomidze.clashpong.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,10 +6,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
-import static com.github.konstantinevashalomidze.pong.model.Card.*;
-import static com.github.konstantinevashalomidze.pong.model.Side.LEFT;
-import static com.github.konstantinevashalomidze.pong.model.Side.RIGHT;
+import static com.github.konstantinevashalomidze.clashpong.model.ActionEvents.*;
+import static com.github.konstantinevashalomidze.clashpong.model.Card.*;
+import static com.github.konstantinevashalomidze.clashpong.model.Side.LEFT;
+import static com.github.konstantinevashalomidze.clashpong.model.Side.RIGHT;
 
 public record World(Playfield playfield, Ball ball, Player left, Player right, List<Brick> bricks) {
     private static final int PADDLE_SPEED = 300;

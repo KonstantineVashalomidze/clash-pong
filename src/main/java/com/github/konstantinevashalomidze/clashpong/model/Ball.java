@@ -1,4 +1,4 @@
-package com.github.konstantinevashalomidze.pong.model;
+package com.github.konstantinevashalomidze.clashpong.model;
 
 public record Ball(Vec2 position, Vec2 velocity, double radius) {
 

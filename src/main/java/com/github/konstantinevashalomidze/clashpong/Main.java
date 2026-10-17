@@ -1,7 +1,7 @@
-package com.github.konstantinevashalomidze;
+package com.github.konstantinevashalomidze.clashpong;
 
-import com.github.konstantinevashalomidze.pong.model.*;
-import com.github.konstantinevashalomidze.pong.ui.GamePanel;
+import com.github.konstantinevashalomidze.clashpong.model.*;
+import com.github.konstantinevashalomidze.clashpong.ui.GamePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,9 +9,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.github.konstantinevashalomidze.pong.model.Card.*;
-import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_COMPUTER;
-import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
+import static com.github.konstantinevashalomidze.clashpong.model.Card.*;
+import static com.github.konstantinevashalomidze.clashpong.model.GameMode.HUMAN_VS_COMPUTER;
+import static com.github.konstantinevashalomidze.clashpong.model.GameMode.HUMAN_VS_HUMAN;
 
 public class Main {
     private static long lastNanos;

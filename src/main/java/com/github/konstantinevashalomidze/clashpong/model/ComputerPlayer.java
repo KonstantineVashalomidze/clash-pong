@@ -1,6 +1,6 @@
-package com.github.konstantinevashalomidze.pong.model;
+package com.github.konstantinevashalomidze.clashpong.model;
 
-import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
+import static com.github.konstantinevashalomidze.clashpong.model.ActionEvents.*;
 
 public class ComputerPlayer {
     public static String makeAction(World world) {

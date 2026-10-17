@@ -6,7 +6,7 @@
 
     <groupId>com.github.konstantinevashalomidze</groupId>
     <artifactId>clash-pong</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <properties>
         <maven.compiler.source>27</maven.compiler.source>
@@ -14,5 +14,23 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <name>clash-pong</name>
     </properties>
+
+    <build>
+        <finalName>clash-pong</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.github.konstantinevashalomidze.clashpong.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

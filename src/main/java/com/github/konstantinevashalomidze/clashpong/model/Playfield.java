@@ -1,4 +1,4 @@
-package com.github.konstantinevashalomidze.pong.model;
+package com.github.konstantinevashalomidze.clashpong.model;
 
 public record Playfield(double width, double height) {
     public Playfield {

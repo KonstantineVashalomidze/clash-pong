@@ -1,6 +1,6 @@
-package com.github.konstantinevashalomidze.pong.ui;
+package com.github.konstantinevashalomidze.clashpong.ui;
 
-import com.github.konstantinevashalomidze.pong.model.*;
+import com.github.konstantinevashalomidze.clashpong.model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,9 +10,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static com.github.konstantinevashalomidze.pong.model.ActionEvents.*;
-import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_COMPUTER;
-import static com.github.konstantinevashalomidze.pong.model.GameMode.HUMAN_VS_HUMAN;
+import static com.github.konstantinevashalomidze.clashpong.model.ActionEvents.*;
+import static com.github.konstantinevashalomidze.clashpong.model.GameMode.HUMAN_VS_COMPUTER;
+import static com.github.konstantinevashalomidze.clashpong.model.GameMode.HUMAN_VS_HUMAN;
 import static java.awt.RenderingHints.*;
 
 public class GamePanel extends JPanel {
