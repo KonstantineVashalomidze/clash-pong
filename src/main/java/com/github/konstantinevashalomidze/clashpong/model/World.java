@@ -71,24 +71,10 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         List<Effect> leftEffects = effects.left();
         List<Effect> rightEffects = effects.right();
 
-        List<Brick> newBricks = bricks;
-
-        newBricks = newBricks.stream()
-                .map(b -> b.tick(dt))
-                .filter(b -> !b.isExpired())
-                .collect(Collectors.toList());
-
-        ball = ball.bounceOffFirstOverlapping(newBricks);
-        newBricks.removeIf(ball::overlaps);
-
-        if (leftPlay.played() == BARRICADE) {
-            newBricks = Brick.spawnBarricades(newBricks);
-        }
-
-        if (rightPlay.played() == BARRICADE) {
-            newBricks = Brick.spawnBarricades(newBricks);
-        }
-
+        // Add bricks
+        BricksResult bricksResult = decideBricks(ball, leftPlay, rightPlay, dt);
+        ball = bricksResult.ball();
+        List<Brick> newBricks = bricksResult.bricks();
 
         return new World(
                 playfield,
@@ -233,6 +219,30 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         }
 
         return new EffectsResult(leftEffects, rightEffects);
+    }
+
+    private record BricksResult(Ball ball, List<Brick> bricks) {
+    }
+
+    private BricksResult decideBricks(Ball ball, CardPlay leftPlay, CardPlay rightPlay, double dt) {
+        List<Brick> newBricks = bricks;
+
+        newBricks = newBricks.stream()
+                .map(b -> b.tick(dt))
+                .filter(b -> !b.isExpired())
+                .collect(Collectors.toList());
+
+        ball = ball.bounceOffFirstOverlapping(newBricks);
+        newBricks.removeIf(ball::overlaps);
+
+        if (leftPlay.played() == BARRICADE) {
+            newBricks = Brick.spawnBarricades(newBricks);
+        }
+
+        if (rightPlay.played() == BARRICADE) {
+            newBricks = Brick.spawnBarricades(newBricks);
+        }
+        return new BricksResult(ball, newBricks);
     }
 
 }
