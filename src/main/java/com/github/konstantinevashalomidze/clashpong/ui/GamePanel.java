@@ -192,44 +192,10 @@ public class GamePanel extends JPanel {
 
         drawBall(g, world.ball());
 
-        // Bricks
         drawBricks(g, world.bricks());
 
-
-        // Left paddle
-        Paddle leftPaddle = world.left().effectivePaddle();
-        int leftPaddleCenterX = (int) leftPaddle.center().x();
-        int leftPaddleCenterY = (int) leftPaddle.center().y();
-        int leftPaddleWidth = (int) leftPaddle.width();
-        int leftPaddleHeight = (int) leftPaddle.height();
-
-        // Right paddle
-        Paddle rightPaddle = world.right().effectivePaddle();
-        int rightPaddleCenterX = (int) rightPaddle.center().x();
-        int rightPaddleCenterY = (int) rightPaddle.center().y();
-        int rightPaddleWidth = (int) rightPaddle.width();
-        int rightPaddleHeight = (int) rightPaddle.height();
-
-        // Paddle 1 color
-        g.setColor(Color.WHITE);
-
-        // Map paddle into rectangle
-        g.fillRect(
-                leftPaddleCenterX - leftPaddleWidth / 2,
-                leftPaddleCenterY - leftPaddleHeight / 2,
-                 leftPaddleWidth,
-                 leftPaddleHeight
-        );
-
-        // Paddle 2 color
-        g.setColor(Color.WHITE);
-
-        g.fillRect(
-                rightPaddleCenterX - rightPaddleWidth / 2,
-                rightPaddleCenterY - rightPaddleHeight / 2,
-                rightPaddleWidth,
-                rightPaddleHeight
-        );
+        drawPaddle(g, world.left().effectivePaddle());
+        drawPaddle(g, world.right().effectivePaddle());
 
         // Draw scores
         g.setColor(Color.WHITE);
@@ -372,6 +338,15 @@ public class GamePanel extends JPanel {
         int centerY = (int) ball.position().y();
         int radius = (int) ball.radius();
         g.fillOval(centerX - radius, centerY - radius, 2 * radius, 2 * radius);
+    }
+
+    private void drawPaddle(Graphics g, Paddle paddle) {
+        g.setColor(Color.WHITE);
+        int centerX = (int) paddle.center().x();
+        int centerY = (int) paddle.center().y();
+        int width = (int) paddle.width();
+        int height = (int) paddle.height();
+        g.fillRect(centerX - width / 2, centerY - height / 2, width, height);
     }
 
     public void setWorld(World world) {
