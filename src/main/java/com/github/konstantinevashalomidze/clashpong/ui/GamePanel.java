@@ -43,6 +43,13 @@ public class GamePanel extends JPanel {
             }
         });
 
+        bindKey("pressed ESCAPE", "backToMenu", () -> {
+            gameMode = null;
+            actionKeys.clear();
+            actionPressedKeys.clear();
+            setWorld(worldFactory.get());
+        });
+
         bindStrafeKeys();
     }
 
@@ -195,6 +202,10 @@ public class GamePanel extends JPanel {
         if (world == null) {
             throw new IllegalStateException("World is null");
         }
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        g.drawString("ESC: Menu", 10, 15);
 
         drawBall(g, world.ball());
 
