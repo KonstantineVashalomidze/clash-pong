@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.github.konstantinevashalomidze.clashpong.model.ActionEvents.*;
 import static com.github.konstantinevashalomidze.clashpong.model.Card.*;
 import static com.github.konstantinevashalomidze.clashpong.model.Side.LEFT;
 import static com.github.konstantinevashalomidze.clashpong.model.Side.RIGHT;
@@ -19,8 +18,8 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final double SHRINK_HEIGHT_SCALE = 0.5;
     private static final double SMASH_TIME_SCALE = 1.6;
     private static final double SLOW_FIELD_TIME_SCALE = 0.5;
-    private static final List<String> LEFT_CARD_KEYS = List.of(F_DOWN, G_DOWN, H_DOWN, J_DOWN);
-    private static final List<String> RIGHT_CARD_KEYS = List.of(K_DOWN, L_DOWN, SEMI_DOWN, SINGLE_QUOTE_DOWN);
+    private static final List<GameAction> LEFT_CARD_KEYS = List.of(GameAction.P1_CARD_1, GameAction.P1_CARD_2,  GameAction.P1_CARD_3, GameAction.P1_CARD_4);
+    private static final List<GameAction> RIGHT_CARD_KEYS = List.of(GameAction.P2_CARD_1, GameAction.P2_CARD_2,  GameAction.P2_CARD_3, GameAction.P2_CARD_4);
     private static final int WIN_SCORE = 7;
     private static final int BARRICADE_BRICK_COUNT = 3;
     private static final int BRICK_WIDTH = 16;
@@ -31,7 +30,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final int RIGHT_HOME_X = 770;
     private static final int STRAFE_RANGE = 120;
 
-    public World step(double dt, Set<String> actionKeys, Set<String> actionPressedKeys) {
+    public World step(double dt, Set<GameAction> actionKeys, Set<GameAction> actionPressedKeys) {
 
         if (winner().isPresent()) {
             return this;
@@ -40,19 +39,19 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         // Paddle movement
         Paddle leftPaddle = movedPaddle(
                 this.left,
-                actionKeys.contains(W_DOWN) && !actionKeys.contains(S_DOWN),
-                actionKeys.contains(S_DOWN) && !actionKeys.contains(W_DOWN),
-                actionKeys.contains(A_DOWN) && !actionKeys.contains(D_DOWN),
-                actionKeys.contains(D_DOWN) && !actionKeys.contains(A_DOWN),
+                actionKeys.contains(GameAction.P1_UP) && !actionKeys.contains(GameAction.P1_DOWN),
+                actionKeys.contains(GameAction.P1_DOWN) && !actionKeys.contains(GameAction.P1_UP),
+                actionKeys.contains(GameAction.P1_STRAFE_LEFT) && !actionKeys.contains(GameAction.P1_STRAFE_RIGHT),
+                actionKeys.contains(GameAction.P1_STRAFE_RIGHT) && !actionKeys.contains(GameAction.P1_STRAFE_LEFT),
                 dt);
 
 
         Paddle rightPaddle = movedPaddle(
                 this.right,
-                actionKeys.contains(UP_ARROW_DOWN) && !actionKeys.contains(DOWN_ARROW_DOWN),
-                actionKeys.contains(DOWN_ARROW_DOWN) && !actionKeys.contains(UP_ARROW_DOWN),
-                actionKeys.contains(LEFT_ARROW_DOWN) && !actionKeys.contains(RIGHT_ARROW_DOWN),
-                actionKeys.contains(RIGHT_ARROW_DOWN) && !actionKeys.contains(LEFT_ARROW_DOWN),
+                actionKeys.contains(GameAction.P2_UP) && !actionKeys.contains(GameAction.P2_DOWN),
+                actionKeys.contains(GameAction.P2_DOWN) && !actionKeys.contains(GameAction.P2_UP),
+                actionKeys.contains(GameAction.P2_STRAFE_LEFT) && !actionKeys.contains(GameAction.P2_STRAFE_RIGHT),
+                actionKeys.contains(GameAction.P2_STRAFE_RIGHT) && !actionKeys.contains(GameAction.P2_STRAFE_LEFT),
                 dt);
 
         // Ball movement
@@ -280,7 +279,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         return paddle;
     }
 
-    private static CardPlay playCard(Energy energy, Hand hand, Set<String> actionPressedKeys, List<String> cardKeys) {
+    private static CardPlay playCard(Energy energy, Hand hand, Set<GameAction> actionPressedKeys, List<GameAction> cardKeys) {
         Card playedCard = null;
         for (int i = 0; i < cardKeys.size(); i++) {
             var cardKey = cardKeys.get(i);

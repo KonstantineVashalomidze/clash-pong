@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static com.github.konstantinevashalomidze.clashpong.model.ActionEvents.*;
 import static com.github.konstantinevashalomidze.clashpong.model.GameMode.HUMAN_VS_COMPUTER;
 import static com.github.konstantinevashalomidze.clashpong.model.GameMode.HUMAN_VS_HUMAN;
 import static java.awt.RenderingHints.*;
@@ -19,230 +18,152 @@ public class GamePanel extends JPanel {
     private static final List<String> LEFT_KEY_LABELS = List.of("F", "G", "H", "J");
     private static final List<String> RIGHT_KEY_LABELS = List.of("K", "L", ";", "'");
 
-    private final Set<String> actionKeys = new HashSet<>();
-    private final Set<String> actionPressedKeys = new HashSet<>();
+    private final Set<GameAction> actionKeys = new HashSet<>();
+    private final Set<GameAction> actionPressedKeys = new HashSet<>();
     private World world;
     private GameMode gameMode;
-    private Supplier<World> worldFactory;
     public GamePanel(Supplier<World> worldFactory) {
-        this.worldFactory = worldFactory;
         this.world = worldFactory.get();
 
         setBackground(Color.BLACK);
 
-        Action wDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode != null) {
-                    actionKeys.add(W_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed W"), W_DOWN);
-        getActionMap().put(W_DOWN, wDown);
-
-        Action wUp = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode != null) {
-                    actionKeys.remove(W_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("released W"), W_UP);
-        getActionMap().put(W_UP, wUp);
-
-        Action sDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode != null) {
-                    actionKeys.add(S_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed S"), S_DOWN);
-        getActionMap().put(S_DOWN, sDown);
-
-        Action sUp = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode != null) {
-                    actionKeys.remove(S_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("released S"), S_UP);
-        getActionMap().put(S_UP, sUp);
-
-        Action upArrowDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode == HUMAN_VS_HUMAN) {
-                    actionKeys.add(UP_ARROW_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed UP"), UP_ARROW_DOWN);
-        getActionMap().put(UP_ARROW_DOWN, upArrowDown);
-
-        Action upArrowUp = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode == HUMAN_VS_HUMAN) {
-                    actionKeys.remove(UP_ARROW_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("released UP"),  UP_ARROW_UP);
-        getActionMap().put(UP_ARROW_UP, upArrowUp);
-
-        Action downArrowDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode == HUMAN_VS_HUMAN) {
-                    actionKeys.add(DOWN_ARROW_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed DOWN"), DOWN_ARROW_DOWN);
-        getActionMap().put(DOWN_ARROW_DOWN, downArrowDown);
-
-        Action downArrowUp = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode == HUMAN_VS_HUMAN) {
-                    actionKeys.remove(DOWN_ARROW_DOWN);
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("released DOWN"), DOWN_ARROW_UP);
-        getActionMap().put(DOWN_ARROW_UP, downArrowUp);
-
-        Action oneDown = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode == null) {
-                    gameMode = HUMAN_VS_HUMAN;
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed 1"), ONE_DOWN);
-        getActionMap().put(ONE_DOWN, oneDown);
-
-        Action twoDown =  new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (gameMode == null) {
-                    gameMode = HUMAN_VS_COMPUTER;
-                }
-            }
-        };
-
-        getInputMap(WHEN_IN_FOCUSED_WINDOW)
-                .put(KeyStroke.getKeyStroke("pressed 2"), TWO_DOWN);
-        getActionMap().put(TWO_DOWN, twoDown);
-
-        // For left cards
-        bindKey("pressed F", F_DOWN, () -> actionPressedKeys.add(F_DOWN));
-        bindKey("pressed G", G_DOWN, () -> actionPressedKeys.add(G_DOWN));
-        bindKey("pressed H", H_DOWN, () -> actionPressedKeys.add(H_DOWN));
-        bindKey("pressed J", J_DOWN, () -> actionPressedKeys.add(J_DOWN));
-
-        // For right cards
-        bindKey("pressed K", K_DOWN, () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(K_DOWN);
+        // Left movement
+        bindKey("pressed W", "p1UpPress", () -> {
+            if (gameMode != null) {
+                actionKeys.add(GameAction.P1_UP);
             }
         });
-        bindKey("pressed L", L_DOWN, () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(L_DOWN);
-            }
-        });
-        bindKey("pressed SEMICOLON", SEMI_DOWN, () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(SEMI_DOWN);
-            }
-        });
-        bindKey("pressed QUOTE", SINGLE_QUOTE_DOWN, () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionPressedKeys.add(SINGLE_QUOTE_DOWN);
+        bindKey("released W", "p1UpRelease", () -> {
+            if (gameMode != null) {
+                actionKeys.remove(GameAction.P1_UP);
             }
         });
 
-        // For play again
-        bindKey("pressed R", R_DOWN, () -> {
+        bindKey("pressed S", "p1DownPress", () -> {
+            if (gameMode != null) {
+                actionKeys.add(GameAction.P1_DOWN);
+            }
+        });
+        bindKey("released S", "p1DownRelease", () -> {
+            if (gameMode != null) {
+                actionKeys.remove(GameAction.P1_DOWN);
+            }
+        });
+
+        // Right movement
+        bindKey("pressed UP", "p2UpPress", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.add(GameAction.P2_UP);
+            }
+        });
+        bindKey("released UP", "p2UpRelease", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.remove(GameAction.P2_UP);
+            }
+        });
+
+        bindKey("pressed DOWN", "p2DownPress", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.add(GameAction.P2_DOWN);
+            }
+        });
+        bindKey("released DOWN", "p2DownRelease", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.remove(GameAction.P2_DOWN);
+            }
+        });
+
+        // Game mode select
+        bindKey("pressed 1", "selectHumanVsHuman", () -> {
+            if (gameMode == null) {
+                gameMode = HUMAN_VS_HUMAN;
+            }
+        });
+        bindKey("pressed 2", "selectHumanVsComputer", () -> {
+            if (gameMode == null) {
+                gameMode = HUMAN_VS_COMPUTER;
+            }
+        });
+
+        // Left cards
+        bindKey("pressed F", "p1Card1", () -> actionPressedKeys.add(GameAction.P1_CARD_1));
+        bindKey("pressed G", "p1Card2", () -> actionPressedKeys.add(GameAction.P1_CARD_2));
+        bindKey("pressed H", "p1Card3", () -> actionPressedKeys.add(GameAction.P1_CARD_3));
+        bindKey("pressed J", "p1Card4", () -> actionPressedKeys.add(GameAction.P1_CARD_4));
+
+        // Right cards
+        bindKey("pressed K", "p2Card1", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_1);
+            }
+        });
+        bindKey("pressed L", "p2Card2", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_2);
+            }
+        });
+        bindKey("pressed SEMICOLON", "p2Card3", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_3);
+            }
+        });
+        bindKey("pressed QUOTE", "p2Card4", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionPressedKeys.add(GameAction.P2_CARD_4);
+            }
+        });
+
+        // Play again
+        bindKey("pressed R", "replay", () -> {
             if (world.winner().isPresent()) {
                 actionKeys.clear();
                 setWorld(worldFactory.get());
             }
         });
 
-        // Strafe
-        bindKey("pressed A", A_DOWN, () -> {
+        // Left strafe
+        bindKey("pressed A", "p1StrafeLeftPress", () -> {
             if (gameMode != null) {
-                actionKeys.add(A_DOWN);
+                actionKeys.add(GameAction.P1_STRAFE_LEFT);
             }
         });
-
-        bindKey("released A",  A_UP, () -> {
+        bindKey("released A", "p1StrafeLeftRelease", () -> {
             if (gameMode != null) {
-                actionKeys.remove(A_DOWN);
-
+                actionKeys.remove(GameAction.P1_STRAFE_LEFT);
             }
         });
 
-        bindKey("pressed D", D_DOWN, () -> {
+        bindKey("pressed D", "p1StrafeRightPress", () -> {
             if (gameMode != null) {
-                actionKeys.add(D_DOWN);
+                actionKeys.add(GameAction.P1_STRAFE_RIGHT);
             }
         });
-
-        bindKey("released D",  D_UP, () -> {
+        bindKey("released D", "p1StrafeRightRelease", () -> {
             if (gameMode != null) {
-                actionKeys.remove(D_DOWN);
+                actionKeys.remove(GameAction.P1_STRAFE_RIGHT);
             }
         });
 
-        bindKey("pressed LEFT", LEFT_ARROW_DOWN, () -> {
+        // Right strafe
+        bindKey("pressed LEFT", "p2StrafeLeftPress", () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.add(LEFT_ARROW_DOWN);
+                actionKeys.add(GameAction.P2_STRAFE_LEFT);
+            }
+        });
+        bindKey("released LEFT", "p2StrafeLeftRelease", () -> {
+            if (gameMode == HUMAN_VS_HUMAN) {
+                actionKeys.remove(GameAction.P2_STRAFE_LEFT);
             }
         });
 
-        bindKey("released LEFT",  LEFT_ARROW_UP, () -> {
+        bindKey("pressed RIGHT", "p2StrafeRightPress", () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.remove(LEFT_ARROW_DOWN);
+                actionKeys.add(GameAction.P2_STRAFE_RIGHT);
             }
         });
-
-        bindKey("pressed RIGHT", RIGHT_ARROW_DOWN, () -> {
+        bindKey("released RIGHT", "p2StrafeRightRelease", () -> {
             if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.add(RIGHT_ARROW_DOWN);
-            }
-        });
-
-        bindKey("released RIGHT",  RIGHT_ARROW_UP, () -> {
-            if (gameMode == HUMAN_VS_HUMAN) {
-                actionKeys.remove(RIGHT_ARROW_DOWN);
+                actionKeys.remove(GameAction.P2_STRAFE_RIGHT);
             }
         });
     }
@@ -468,7 +389,7 @@ public class GamePanel extends JPanel {
         return world;
     }
 
-    public Set<String> getActionKeys() {
+    public Set<GameAction> getActionKeys() {
         return actionKeys;
     }
 
@@ -476,7 +397,7 @@ public class GamePanel extends JPanel {
         return gameMode;
     }
 
-    public Set<String> getActionPressedKeys() {
+    public Set<GameAction> getActionPressedKeys() {
         return actionPressedKeys;
     }
 

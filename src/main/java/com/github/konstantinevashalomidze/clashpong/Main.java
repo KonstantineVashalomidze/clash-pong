@@ -34,8 +34,8 @@ public class Main {
                 if (gamePanel.getGameMode() == HUMAN_VS_HUMAN) {
                     gamePanel.setWorld(gamePanel.getWorld().step(dt, gamePanel.getActionKeys(), gamePanel.getActionPressedKeys()));
                 } else if (gamePanel.getGameMode() == HUMAN_VS_COMPUTER) {
-                    Set<String> copiedActionKeys = new HashSet<>(gamePanel.getActionKeys());
-                    String computerAction = ComputerPlayer.makeAction(gamePanel.getWorld());
+                    Set<GameAction> copiedActionKeys = new HashSet<>(gamePanel.getActionKeys());
+                    GameAction computerAction = ComputerPlayer.makeAction(gamePanel.getWorld());
                     if (computerAction != null) {
                         copiedActionKeys.add(computerAction);
                     }
