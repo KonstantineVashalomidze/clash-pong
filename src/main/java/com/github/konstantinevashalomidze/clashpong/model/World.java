@@ -18,11 +18,6 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final List<GameAction> LEFT_CARD_KEYS = List.of(GameAction.P1_CARD_1, GameAction.P1_CARD_2,  GameAction.P1_CARD_3, GameAction.P1_CARD_4);
     private static final List<GameAction> RIGHT_CARD_KEYS = List.of(GameAction.P2_CARD_1, GameAction.P2_CARD_2,  GameAction.P2_CARD_3, GameAction.P2_CARD_4);
     private static final int WIN_SCORE = 7;
-    private static final int BARRICADE_BRICK_COUNT = 3;
-    private static final int BRICK_WIDTH = 16;
-    private static final int BRICK_HEIGHT = 40;
-    private static final int BRICK_SPAWNING_AREA_X1 = 350, BRICK_SPAWNING_AREA_X2 = 450;
-    private static final int BRICK_SPAWNING_AREA_Y1 = 100, BRICK_SPAWNING_AREA_Y2 = 400;
 
     public World step(double dt, Set<GameAction> actionKeys, Set<GameAction> actionPressedKeys) {
         if (winner().isPresent()) {
@@ -140,11 +135,11 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         newBricks.removeIf(ball::overlaps);
 
         if (leftPlay.played() == BARRICADE) {
-            newBricks = spawnBricks(newBricks);
+            newBricks = Brick.spawnBarricades(newBricks);
         }
 
         if (rightPlay.played() == BARRICADE) {
-            newBricks = spawnBricks(newBricks);
+            newBricks = Brick.spawnBarricades(newBricks);
         }
 
 
@@ -206,25 +201,4 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             return Optional.empty();
         }
     }
-
-    public static List<Brick> spawnBricks(List<Brick> bricks) {
-        List<Brick> newBricks = new ArrayList<>(bricks);
-        for (int i = 0; i < BARRICADE_BRICK_COUNT; i++) {
-            newBricks.add(new Brick(
-                    new Vec2(
-                            randomInRange(BRICK_SPAWNING_AREA_X1, BRICK_SPAWNING_AREA_X2),
-                            randomInRange(BRICK_SPAWNING_AREA_Y1, BRICK_SPAWNING_AREA_Y2)
-                            ),
-                    BRICK_WIDTH,
-                    BRICK_HEIGHT,
-                    BARRICADE.duration()
-            ));
-        }
-        return newBricks;
-    }
-
-    private static double randomInRange(double lower, double upper) {
-        return lower + (upper - lower) * Math.random();
-    }
-
 }
