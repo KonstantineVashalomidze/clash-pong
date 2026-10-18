@@ -50,6 +50,15 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
         }
     }
 
+    public Ball speedUp(double factor, double maxSpeed) {
+        Vec2 scaled = velocity.times(factor);
+        double speed = Math.sqrt(scaled.x() * scaled.x() + scaled.y() * scaled.y());
+        if (speed > maxSpeed) {
+            scaled = scaled.times(maxSpeed / speed);
+        }
+        return new Ball(position, scaled, radius);
+    }
+
     public boolean isOutRight(Playfield playfield) {
         return position.x() - radius > playfield.width();
     }

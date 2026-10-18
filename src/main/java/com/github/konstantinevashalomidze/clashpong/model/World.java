@@ -17,6 +17,11 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final List<GameAction> LEFT_CARD_KEYS = List.of(GameAction.P1_CARD_1, GameAction.P1_CARD_2,  GameAction.P1_CARD_3, GameAction.P1_CARD_4);
     private static final List<GameAction> RIGHT_CARD_KEYS = List.of(GameAction.P2_CARD_1, GameAction.P2_CARD_2,  GameAction.P2_CARD_3, GameAction.P2_CARD_4);
     private static final int WIN_SCORE = 7;
+    private static final double PADDLE_HIT_SPEED_MULTIPLIER = 1.12;
+    private static final double MAX_SPEED_MULTIPLIER = 2.6;
+    private static final double BASE_BALL_SPEED = Math.sqrt(SERVE_SPEED_X * SERVE_SPEED_X + SERVE_SPEED_Y * SERVE_SPEED_Y);
+    private static final double MAX_BALL_SPEED = BASE_BALL_SPEED * MAX_SPEED_MULTIPLIER;
+
 
     public World step(double dt, Set<GameAction> actionKeys, Set<GameAction> actionPressedKeys) {
         if (winner().isPresent()) {
@@ -171,7 +176,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                     && this.right.effects().stream().anyMatch(e -> e.card() == SMASH && !e.active())) {
                 rightSmashHit = true;
             }
-            ball = ball.reverseX();
+            ball = ball.reverseX().speedUp(PADDLE_HIT_SPEED_MULTIPLIER, MAX_BALL_SPEED);
         }
         return new PaddleHitResult(ball, leftSmashHit, rightSmashHit);
     }
