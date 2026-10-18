@@ -1,6 +1,7 @@
 package com.github.konstantinevashalomidze.clashpong;
 
 import com.github.konstantinevashalomidze.clashpong.model.*;
+import com.github.konstantinevashalomidze.clashpong.sound.PongSoundEffects;
 import com.github.konstantinevashalomidze.clashpong.ui.GamePanel;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import static com.github.konstantinevashalomidze.clashpong.model.GameMode.HUMAN_
 public class Main {
     private static long lastNanos;
     private static final double MAX_DT = 0.05;
+    private static final PongSoundEffects soundEffects = new PongSoundEffects();
 
     static void main() {
         EventQueue.invokeLater(() -> {
@@ -32,7 +34,9 @@ public class Main {
                 lastNanos = now;
 
                 if (gamePanel.getGameMode() == HUMAN_VS_HUMAN) {
-                    gamePanel.setWorld(gamePanel.getWorld().step(dt, gamePanel.getActionKeys(), gamePanel.getActionPressedKeys()));
+                    StepResult result = gamePanel.getWorld().step(dt, gamePanel.getActionKeys(), gamePanel.getActionPressedKeys());
+                    gamePanel.setWorld(result.world());
+                    playSounds(result.events());
                 } else if (gamePanel.getGameMode() == HUMAN_VS_COMPUTER) {
                     Set<GameAction> copiedActionKeys = new HashSet<>(gamePanel.getActionKeys());
                     GameAction computerAction = ComputerPlayer.makeAction(gamePanel.getWorld());
@@ -45,7 +49,9 @@ public class Main {
                     if (computerCard != null) {
                         copiedActionPressedKeys.add(computerCard);
                     }
-                    gamePanel.setWorld(gamePanel.getWorld().step(dt, copiedActionKeys, copiedActionPressedKeys));
+                    StepResult result = gamePanel.getWorld().step(dt, copiedActionKeys, copiedActionPressedKeys);
+                    gamePanel.setWorld(result.world());
+                    playSounds(result.events());
                 }
                 gamePanel.getActionPressedKeys().clear();
             });
@@ -84,5 +90,18 @@ public class Main {
                 ),
                 List.of()
         );
+    }
+
+
+    private static void playSounds(Set<GameEvent> events) {
+        if (events.contains(GameEvent.PADDLE_HIT)) {
+            soundEffects.paddleHitSound();
+        }
+        if (events.contains(GameEvent.WALL_HIT)) {
+            soundEffects.wallHitSound();
+        }
+        if (events.contains(GameEvent.POINT_SCORED)) {
+            soundEffects.missedHitSound();
+        }
     }
 }

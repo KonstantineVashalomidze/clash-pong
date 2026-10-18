@@ -50,6 +50,10 @@ public record Ball(Vec2 position, Vec2 velocity, double radius) {
         }
     }
 
+    public boolean touchesWall(Playfield playfield) {
+        return position.y() - radius < 0 || position.y() + radius > playfield.height();
+    }
+
     public Ball speedUp(double factor, double maxSpeed) {
         Vec2 scaled = velocity.times(factor);
         double speed = Math.sqrt(scaled.x() * scaled.x() + scaled.y() * scaled.y());

@@ -19,7 +19,7 @@ public class PongSoundEffects {
 
   public final Clip paddleClip, wallClip, missClip;
   public final AudioFormat format;
-  PongSoundEffects() {
+  public PongSoundEffects() {
     format = new AudioFormat(SAMPLE_RATE, 8, 1, true, false);
 
     Clip paddle, wall, miss;
@@ -45,11 +45,11 @@ public class PongSoundEffects {
 
   }
 
-  void paddleHitSound() {playClip(paddleClip);}
+  public void paddleHitSound() {playClip(paddleClip);}
 
-  void wallHitSound() {playClip(wallClip);}
+  public void wallHitSound() {playClip(wallClip);}
 
-  void missedHitSound() {playClip(missClip);}
+  public void missedHitSound() {playClip(missClip);}
 
   void playClip(Clip clip) {
     if (clip != null && clip.isOpen()) {

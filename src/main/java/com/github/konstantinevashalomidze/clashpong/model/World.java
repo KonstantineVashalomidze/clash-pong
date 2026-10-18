@@ -1,5 +1,6 @@
 package com.github.konstantinevashalomidze.clashpong.model;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,9 +24,9 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
     private static final double MAX_BALL_SPEED = BASE_BALL_SPEED * MAX_SPEED_MULTIPLIER;
 
 
-    public World step(double dt, Set<GameAction> actionKeys, Set<GameAction> actionPressedKeys) {
+    public StepResult step(double dt, Set<GameAction> actionKeys, Set<GameAction> actionPressedKeys) {
         if (winner().isPresent()) {
-            return this;
+            return new StepResult(this, Set.of());
         }
 
         // Paddle movement
@@ -46,10 +47,14 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                 playfield);
 
         // Ball movement
-        Ball ball = this.ball.advance(dt * ballTimeScale()).bounceOffWalls(playfield);
+        Ball advancedBall = this.ball.advance(dt * ballTimeScale());
+        boolean wallWasHit = advancedBall.touchesWall(playfield);
+        Ball ball = advancedBall.bounceOffWalls(playfield);
 
         // Scoring
         ScoringResult scoring = decideScoring(ball);
+        boolean pointScored = scoring.leftScore() != this.left().score()
+                || scoring.rightScore() != this.right().score();
         ball = scoring.ball();
         int leftScore = scoring.leftScore();
         int rightScore = scoring.rightScore();
@@ -61,6 +66,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         ball = paddleHits.ball();
         boolean leftSmashHit = paddleHits.leftSmashHit();
         boolean rightSmashHit = paddleHits.rightSmashHit();
+        boolean paddleWasHit = paddleHits.paddleWasHit();
 
         // Energy management
         Energy leftEnergy = this.left.energy().refill(dt);
@@ -81,7 +87,18 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
         ball = bricksResult.ball();
         List<Brick> newBricks = bricksResult.bricks();
 
-        return new World(
+        Set<GameEvent> events = new HashSet<>();
+        if (wallWasHit) {
+            events.add(GameEvent.WALL_HIT);
+        }
+        if (paddleWasHit) {
+            events.add(GameEvent.PADDLE_HIT);
+        }
+        if (pointScored) {
+            events.add(GameEvent.POINT_SCORED);
+        }
+
+        return new StepResult(new World(
                 playfield,
                 ball,
                 new Player(
@@ -99,7 +116,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
                         rightEffects
                 ),
                 newBricks
-        );
+        ), events);
     }
 
     private double ballTimeScale() {
@@ -159,7 +176,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
 
 
 
-    private record PaddleHitResult(Ball ball, boolean leftSmashHit, boolean rightSmashHit) {
+    private record PaddleHitResult(Ball ball, boolean paddleWasHit, boolean leftSmashHit, boolean rightSmashHit) {
     }
 
     private PaddleHitResult decidePaddleHits(Ball ball) {
@@ -178,7 +195,7 @@ public record World(Playfield playfield, Ball ball, Player left, Player right, L
             }
             ball = ball.reverseX().speedUp(PADDLE_HIT_SPEED_MULTIPLIER, MAX_BALL_SPEED);
         }
-        return new PaddleHitResult(ball, leftSmashHit, rightSmashHit);
+        return new PaddleHitResult(ball, wasLeftHit || wasRightHit, leftSmashHit, rightSmashHit);
     }
 
 
