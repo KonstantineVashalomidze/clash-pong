@@ -39,7 +39,13 @@ public class Main {
                     if (computerAction != null) {
                         copiedActionKeys.add(computerAction);
                     }
-                    gamePanel.setWorld(gamePanel.getWorld().step(dt, copiedActionKeys, gamePanel.getActionPressedKeys()));
+
+                    Set<GameAction> copiedActionPressedKeys = new HashSet<>(gamePanel.getActionPressedKeys());
+                    GameAction computerCard = ComputerPlayer.chooseCard(gamePanel.getWorld());
+                    if (computerCard != null) {
+                        copiedActionPressedKeys.add(computerCard);
+                    }
+                    gamePanel.setWorld(gamePanel.getWorld().step(dt, copiedActionKeys, copiedActionPressedKeys));
                 }
                 gamePanel.getActionPressedKeys().clear();
             });
